@@ -11,7 +11,7 @@ html, body {
     height: 100%;
     overflow: hidden;
 }
-h3 {
+h3, #controls {
     padding: 5px;
 }
 #left {
@@ -31,4 +31,8 @@ h3 {
 }
 a:visited {
     color: #ffffff;
+}
+#author {
+    position: absolute;
+    bottom: 0px;
 }

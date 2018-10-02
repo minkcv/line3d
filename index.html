@@ -4,7 +4,7 @@
     <title>Line 3D</title>
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="three/three.js"></script>
-    <script src="points.js"></script>
+    
 </head>
 <body>
     <div id='left'>
@@ -18,7 +18,16 @@
             <li>E: Right Side View</li>
             <li>R: Isometric View</li>
         </ul>
-        <a href="http://minkcv.com">minkcv.com</a>
+        <div id='controls'>
+            <input type="checkbox" id="toggleGrid" onchange='toggleGrid(this)' checked>
+            <label for="toggleGrid">Show Grid</label><br>
+            <input type="checkbox" id='toggleAxes' onchange='toggleAxes(this)' checked>
+            <label for='toggleAxes'>Show World Axes</label><br>
+            <input type="checkbox" id='toggleCameraAxes' onchange='toggleCameraAxes(this)' checked>
+            <label for='toggleCameraAxes'>Show Camera Axes</label><br>
+            <button onclick='addPoint()'>Add Point (A)</button>
+        </div>
+        <a href="http://minkcv.com" id='author'>minkcv.com</a>
     </div>
     <div id='right'>
         <div id='three' 
@@ -31,5 +40,6 @@
         </div>
     </div>
     <script src="main.js"></script>
+    <script src="points.js"></script>
 </body>
 </html>
