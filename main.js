@@ -66,8 +66,9 @@ renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
 var raycaster = new THREE.Raycaster();
-raycaster.linePrecision = 5;
+raycaster.linePrecision = 2;
 var mouseVec = new THREE.Vector2();
+var pickedObject = null;
 
 // Rotate, zoom, pan, act on keypresses.
 var rotateFactor = 100;
@@ -101,28 +102,30 @@ function update() {
         cam.position.set(0, 0, 0);
     }
     if (mouseButton == 0) { // Left click
-        cam.rotation.y += mouseDX / rotateFactor;
-        camera.rotation.x += mouseDY / rotateFactor;
-        camAxes.rotation.y -= mouseDX / rotateFactor;
-        if (camera.rotation.x > Math.PI / 2)
-            camera.rotation.x = Math.PI / 2;
-        if (camera.rotation.x < -Math.PI / 2)
-            camera.rotation.x = -Math.PI / 2;
+        if (pickedObject != null) {
+            var translate = getScreenTranslation();
+            if (pickedObject.xGrip) {
+                pickedObject.parent.translateX(-translate.x);
+            }
+            if (pickedObject.yGrip) {
+                pickedObject.parent.translateY(-translate.y);
+            }
+            if (pickedObject.zGrip) {
+                pickedObject.parent.translateZ(-translate.z);
+            }
+        }
+        else {
+            cam.rotation.y += mouseDX / rotateFactor;
+            camera.rotation.x += mouseDY / rotateFactor;
+            camAxes.rotation.y -= mouseDX / rotateFactor;
+            if (camera.rotation.x > Math.PI / 2)
+                camera.rotation.x = Math.PI / 2;
+            if (camera.rotation.x < -Math.PI / 2)
+                camera.rotation.x = -Math.PI / 2;
+        }
     }
     else if (mouseButton == 2) { // Right click
-        // Translate 2D screen movement into the appropriate 3D movement.
-        // Holy crap this was difficult to figure out.
-        var dir = new THREE.Vector3();
-        camera.getWorldDirection(dir);
-        dir.normalize();
-        var viewUp = getUpVector(dir, camera.rotation.x, cam.rotation.y);
-        var viewRight = new THREE.Vector3();
-        viewRight.crossVectors(dir, viewUp);
-        var translate = new THREE.Vector3(
-            viewRight.x * -mouseDX + viewUp.x * -mouseDY,
-            viewUp.y * -mouseDY,
-            viewUp.z * -mouseDY + viewRight.z * -mouseDX);
-        translate.multiplyScalar(1 / realCamera.zoom);
+        var translate = getScreenTranslation();
         cam.position.add(translate);
     }
     else if (mouseButton == 1) { // Middle click
@@ -140,6 +143,23 @@ function update() {
     mouseDY = 0;
     mouseDZ = 0;
     keysUp = [];
+}
+
+function getScreenTranslation() {
+    // Translate 2D screen movement into the appropriate 3D movement.
+    // Holy crap this was difficult to figure out.
+    var dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    dir.normalize();
+    var viewUp = getUpVector(dir, camera.rotation.x, cam.rotation.y);
+    var viewRight = new THREE.Vector3();
+    viewRight.crossVectors(dir, viewUp);
+    var translate = new THREE.Vector3(
+        viewRight.x * -mouseDX + viewUp.x * -mouseDY,
+        viewUp.y * -mouseDY,
+        viewUp.z * -mouseDY + viewRight.z * -mouseDX);
+    translate.multiplyScalar(1 / realCamera.zoom);
+    return translate;
 }
 
 function getUpVector(dir, xr, yr) {
@@ -174,6 +194,7 @@ function threeUp(event) {
     mouseDown = false;
     mouseX = event.clientX;
     mouseY = event.clientY;
+    pickedObject = null;
 }
 
 function threeMove(event) {
@@ -223,15 +244,21 @@ function toggleCameraAxes(checkbox) {
 }
 
 function animate() {
-    requestAnimationFrame( animate);
+    requestAnimationFrame(animate);
     update();
 
     mouseVec.x = ((mouseX - threediv.offsetLeft) / threediv.clientWidth) * 2 - 1;
     mouseVec.y = -(mouseY / threediv.clientHeight) * 2 + 1;
     raycaster.setFromCamera(mouseVec, realCamera);
     var intersects = raycaster.intersectObjects(scene.children, true);
+    
     for (var i = 0; i < intersects.length; i++) {
-        console.log(intersects[i]);
+        if (pickedObject == null && 
+            mouseDown == false &&
+            intersects[i].object.parent.pointId) {
+            pickedObject = intersects[i].object;
+            break;
+        }
     }
 
     renderer.render(scene, realCamera);
