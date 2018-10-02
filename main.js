@@ -2,17 +2,32 @@
 document.addEventListener('contextmenu', event => event.preventDefault());
 
 // Handle keypresses
+// Use like:
+// if (keys.w in keysDown)
+// for any time w is down
+// or
+// if (keys.w in keysUp)
+// for when w is released.
 var keysDown = [];
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82}
+var keysUp = []; // Cleared every update.
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84}
 addEventListener("keydown", function(e) {
     if (Object.values(keys).includes(e.keyCode))
         e.preventDefault();
     keysDown[e.keyCode] = true;
+    delete keysUp[e.keyCode];
 }, false);
 
 addEventListener("keyup", function(e) {
     delete keysDown[e.keyCode];
+    keysUp[e.keyCode] = true;
 }, false);
+
+// THREE.js materials
+var whiteLineMat = new THREE.LineBasicMaterial({color: 0xffffff});
+var redLineMat = new THREE.LineBasicMaterial({color: 0xff0000});
+var greenLineMat = new THREE.LineBasicMaterial({color: 0x00ff00});
+var blueLineMat = new THREE.LineBasicMaterial({color: 0x0000ff});
 
 // Set up 3D scene, camera, and renderer in THREE.js
 var threediv = document.getElementById('three');
@@ -39,10 +54,12 @@ cam.add(camAxes);
 var originAxes = new THREE.AxesHelper(50);
 scene.add(originAxes);
 
-var whiteLineMat = new THREE.LineBasicMaterial({color: 0xffffff});
-var redLineMat = new THREE.LineBasicMaterial({color: 0xff0000});
-var greenLineMat = new THREE.LineBasicMaterial({color: 0x00ff00});
-var blueLineMat = new THREE.LineBasicMaterial({color: 0x0000ff});
+// Start in iso view.
+cam.rotation.y = Math.PI / 4;
+camera.rotation.x = -Math.PI / 4;
+camAxes.rotation.y = -Math.PI / 4;
+realCamera.zoom = 0.8;
+realCamera.updateProjectionMatrix();
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
@@ -52,10 +69,14 @@ var raycaster = new THREE.Raycaster();
 raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
 
+// Rotate, zoom, pan, act on keypresses.
 var rotateFactor = 100;
 var sprintFactor = 1;
 var zoomSpeed = 0.2;
 function update() {
+    if (keys.a in keysUp)
+        addPoint();
+    
     if (keys.q in keysDown) {
         cam.rotation.y = 0;
         camera.rotation.x = 0;
@@ -75,6 +96,9 @@ function update() {
         cam.rotation.y = Math.PI / 4;
         camera.rotation.x = -Math.PI / 4;
         camAxes.rotation.y = -Math.PI / 4;
+    }
+    if (keys.t in keysDown) {
+        cam.position.set(0, 0, 0);
     }
     if (mouseButton == 0) { // Left click
         cam.rotation.y += mouseDX / rotateFactor;
@@ -115,6 +139,7 @@ function update() {
     mouseDX = 0;
     mouseDY = 0;
     mouseDZ = 0;
+    keysUp = [];
 }
 
 function getUpVector(dir, xr, yr) {
@@ -126,6 +151,7 @@ function getUpVector(dir, xr, yr) {
     return up;
 }
 
+// Handle mouse clicks
 var mouseButton = -1;
 var mouseX;
 var mouseY;
@@ -168,6 +194,7 @@ function threeOut(event) {
     mouseDown = false;
 }
 
+// Handle options in side pane
 function toggleGrid(checkbox) {
     if (checkbox.checked) {
         scene.add(gridHelper);

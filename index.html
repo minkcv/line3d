@@ -12,11 +12,14 @@
         <ul>
             <li>Left Mouse: Rotate</li>
             <li>Middle Mouse: Change Y</li>
-            <li>Right Mouse: Pan</li>
+            <li>Right Mouse: Pan</li><br>
             <li>Q: Front View</li>
             <li>W: Top View</li>
             <li>E: Right Side View</li>
             <li>R: Isometric View</li>
+            <li>T: Recenter Camera</li>
+            <br>
+            <li>A: <button onclick='addPoint()'>Add Point</button></li>
         </ul>
         <div id='controls'>
             <input type="checkbox" id="toggleGrid" onchange='toggleGrid(this)' checked>
@@ -25,18 +28,17 @@
             <label for='toggleAxes'>Show World Axes</label><br>
             <input type="checkbox" id='toggleCameraAxes' onchange='toggleCameraAxes(this)' checked>
             <label for='toggleCameraAxes'>Show Camera Axes</label><br>
-            <button onclick='addPoint()'>Add Point (A)</button>
+            
         </div>
         <a href="http://minkcv.com" id='author'>minkcv.com</a>
     </div>
     <div id='right'>
         <div id='three' 
-        onmousedown='threeDown(event)' 
-        onmouseup='threeUp(event)' 
-        onmousemove='threeMove(event)' 
+        onmousedown='threeDown(event)'
+        onmouseup='threeUp(event)'
+        onmousemove='threeMove(event)'
         onwheel='threeWheel(event)'
         onmouseout='threeOut(event)'>
-            
         </div>
     </div>
     <script src="main.js"></script>
