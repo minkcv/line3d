@@ -10,7 +10,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 // for when w is released.
 var keysDown = [];
 var keysUp = []; // Cleared every update.
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84}
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67}
 addEventListener("keydown", function(e) {
     if (Object.values(keys).includes(e.keyCode))
         e.preventDefault();
@@ -72,7 +72,9 @@ raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
 var pickedObject = null; // Moused over object.
 var selectedPoint = null; // Clicked object parent.
-var connectMode = false;
+var MODE = {connect: 0, disconnect: 1, select: 2}
+var clickMode = MODE.select;
+selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
 var pickedMoveAxis = AXIS.x;
 
@@ -85,7 +87,11 @@ function update() {
         addPoint();
 
     if (keys.c in keysUp)
-        connectMode = true;
+        connectMode();
+    if (keys.s in keysUp)
+        selectMode();
+    if (keys.d in keysUp)
+        disconnectMode();
     
     if (keys.q in keysDown) {
         cam.rotation.y = 0;
@@ -113,10 +119,10 @@ function update() {
     if (mouseButton == 0) { // Select or move points - Left click
         if (pickedObject != null) {
             if (pickedObject.pointCube) {
-                if (connectMode) {
-                    connectMode = false;
+                if (clickMode == MODE.connect) {
+                    
                 }
-                else {
+                else if(clickMode == MODE.select) {
                     if (selectedPoint != null) {
                         // Deselect previously selected.
                         deselectPoint(selectedPoint); 
@@ -299,6 +305,21 @@ function toggleCameraAxes(checkbox) {
     else {
         cam.remove(camAxes);
     }
+}
+
+function selectMode() {
+    clickMode = MODE.select;
+    document.getElementById('currentMode').innerHTML = 'SELECT';
+}
+
+function connectMode() {
+    clickMode = MODE.connect;
+    document.getElementById('currentMode').innerHTML = 'CONNECT';
+}
+
+function disconnectMode() {
+    clickMode = MODE.disconnect;
+    document.getElementById('currentMode').innerHTML = 'DISCONNECT';
 }
 
 function animate() {

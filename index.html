@@ -9,8 +9,9 @@
 <body>
     <div id='left'>
         <h3>Line 3D</h3>
+        <p>Current Mode: <span id='currentMode'></span></p>
         <ul>
-            <li>Left Mouse: Select or Move</li>
+            <li>Left Mouse: Mode Action</li>
             <li>Middle Mouse: Pan View</li>
             <li>Right Rotate View</li><br>
             <li>Q: Front View</li>
@@ -20,6 +21,10 @@
             <li>T: Recenter Camera</li>
             <br>
             <li>A: <button onclick='addPoint()'>Add Point</button></li>
+            <br>
+            <li>S: <button onclick='selectMode()'>Select Points</button></li>
+            <li>C: <button onclick='connectMode()'>Connect Selected</button></li>
+            <li>D: <button onclick='disconnectMode()'>Disconnect Selected</button></li>
         </ul>
         <div id='controls'>
             <input type="checkbox" id="toggleGrid" onchange='toggleGrid(this)' checked>
