@@ -78,10 +78,11 @@ selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
 var pickedMoveAxis = AXIS.x;
 
-// Rotate, zoom, pan, act on keypresses.
 var rotateFactor = 100;
 var sprintFactor = 1;
 var zoomSpeed = 0.2;
+
+// Rotate, zoom, pan, act on keypresses, move, connect, disconnect points.
 function update() {
     if (keys.a in keysUp)
         addPoint();
@@ -120,7 +121,8 @@ function update() {
         if (pickedObject != null) {
             if (pickedObject.pointCube) {
                 if (clickMode == MODE.connect) {
-                    
+                    var line = createLine(selectedPoint.position, pickedObject.parent.position);
+                    scene.add(line);
                 }
                 else if(clickMode == MODE.select) {
                     if (selectedPoint != null) {
