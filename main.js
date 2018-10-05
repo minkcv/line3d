@@ -28,6 +28,8 @@ var whiteLineMat = new THREE.LineBasicMaterial({color: 0xffffff});
 var redLineMat = new THREE.LineBasicMaterial({color: 0xff0000});
 var greenLineMat = new THREE.LineBasicMaterial({color: 0x00ff00});
 var blueLineMat = new THREE.LineBasicMaterial({color: 0x0000ff});
+var blueMat = new THREE.MeshBasicMaterial({color: 0x0000ff});
+var redMat = new THREE.MeshBasicMaterial({color: 0xff0000});
 
 // Set up 3D scene, camera, and renderer in THREE.js
 var threediv = document.getElementById('three');
@@ -66,9 +68,13 @@ renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
 var raycaster = new THREE.Raycaster();
-raycaster.linePrecision = 2;
+raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
-var pickedObject = null;
+var pickedObject = null; // Moused over object.
+var selectedPoint = null; // Clicked object parent.
+var connectMode = false;
+var AXIS = {x: 0, y: 1, z: 2, none: 3};
+var pickedMoveAxis = AXIS.x;
 
 // Rotate, zoom, pan, act on keypresses.
 var rotateFactor = 100;
@@ -77,6 +83,9 @@ var zoomSpeed = 0.2;
 function update() {
     if (keys.a in keysUp)
         addPoint();
+
+    if (keys.c in keysUp)
+        connectMode = true;
     
     if (keys.q in keysDown) {
         cam.rotation.y = 0;
@@ -101,34 +110,60 @@ function update() {
     if (keys.t in keysDown) {
         cam.position.set(0, 0, 0);
     }
-    if (mouseButton == 0) { // Left click
+    if (mouseButton == 0) { // Select or move points - Left click
         if (pickedObject != null) {
-            var translate = getScreenTranslation();
-            if (pickedObject.xGrip) {
-                pickedObject.parent.translateX(-translate.x);
-            }
-            if (pickedObject.yGrip) {
-                pickedObject.parent.translateY(-translate.y);
-            }
-            if (pickedObject.zGrip) {
-                pickedObject.parent.translateZ(-translate.z);
+            if (pickedObject.pointCube) {
+                if (connectMode) {
+                    connectMode = false;
+                }
+                else {
+                    if (selectedPoint != null) {
+                        // Deselect previously selected.
+                        deselectPoint(selectedPoint); 
+                    }
+                    selectedPoint = pickedObject.parent;
+                    selectPoint(selectedPoint);
+                }
             }
         }
-        else {
-            cam.rotation.y += mouseDX / rotateFactor;
-            camera.rotation.x += mouseDY / rotateFactor;
-            camAxes.rotation.y -= mouseDX / rotateFactor;
-            if (camera.rotation.x > Math.PI / 2)
-                camera.rotation.x = Math.PI / 2;
-            if (camera.rotation.x < -Math.PI / 2)
-                camera.rotation.x = -Math.PI / 2;
+        if (selectedPoint != null) {
+            var translate = getScreenTranslation();
+            if (pickedObject != null && pickedMoveAxis == AXIS.none) {
+                if (pickedObject.xGrip) {
+                    pickedMoveAxis = AXIS.x;
+                }
+                if (pickedObject.yGrip) {
+                    pickedMoveAxis = AXIS.y;
+                }
+                if (pickedObject.zGrip) {
+                    pickedMoveAxis = AXIS.z;
+                }
+            }
+            if (pickedMoveAxis == AXIS.x) {
+                selectedPoint.translateX(-translate.x);
+            }
+            if (pickedMoveAxis == AXIS.y) {
+                selectedPoint.translateY(-translate.y);
+            }
+            if (pickedMoveAxis == AXIS.z) {
+                selectedPoint.translateZ(-translate.z);
+            }
         }
     }
-    else if (mouseButton == 2) { // Right click
+    else if (mouseButton == 2) { // Rotate view - Right mouse
+        cam.rotation.y += mouseDX / rotateFactor;
+        camera.rotation.x += mouseDY / rotateFactor;
+        camAxes.rotation.y -= mouseDX / rotateFactor;
+        if (camera.rotation.x > Math.PI / 2)
+            camera.rotation.x = Math.PI / 2;
+        if (camera.rotation.x < -Math.PI / 2)
+            camera.rotation.x = -Math.PI / 2;
+    }
+    else if (mouseButton == 1) { // Pan view - Middle click
         var translate = getScreenTranslation();
         cam.position.add(translate);
     }
-    else if (mouseButton == 1) { // Middle click
+    else if (mouseButton == 4) { // Extra click?
         cam.translateY(-mouseDY);
     }
     if (mouseDZ < 0) { // Scroll wheel
@@ -143,6 +178,28 @@ function update() {
     mouseDY = 0;
     mouseDZ = 0;
     keysUp = [];
+}
+
+function selectPoint(point) {
+    selectedPoint.children.forEach((c) => {
+        if (c.pointCube) {
+            c.material = redMat;
+        }
+        if (c.xGrip || c.yGrip || c.zGrip) {
+            c.visible = true;
+        }
+    });
+}
+
+function deselectPoint(point) {
+    selectedPoint.children.forEach((c) => {
+        if (c.pointCube) {
+            c.material = blueMat;
+        }
+        if (c.xGrip || c.yGrip || c.zGrip) {
+            c.visible = false;
+        }
+    });
 }
 
 function getScreenTranslation() {
@@ -192,6 +249,7 @@ function threeUp(event) {
     event.preventDefault();
     mouseButton = -1;
     mouseDown = false;
+    pickedMoveAxis = AXIS.none;
     mouseX = event.clientX;
     mouseY = event.clientY;
     pickedObject = null;
@@ -247,17 +305,18 @@ function animate() {
     requestAnimationFrame(animate);
     update();
 
-    mouseVec.x = ((mouseX - threediv.offsetLeft) / threediv.clientWidth) * 2 - 1;
-    mouseVec.y = -(mouseY / threediv.clientHeight) * 2 + 1;
-    raycaster.setFromCamera(mouseVec, realCamera);
-    var intersects = raycaster.intersectObjects(scene.children, true);
-    
-    for (var i = 0; i < intersects.length; i++) {
-        if (pickedObject == null && 
-            mouseDown == false &&
-            intersects[i].object.parent.pointId) {
-            pickedObject = intersects[i].object;
-            break;
+    if (mouseDown) {
+        mouseVec.x = ((mouseX - threediv.offsetLeft) / threediv.clientWidth) * 2 - 1;
+        mouseVec.y = -(mouseY / threediv.clientHeight) * 2 + 1;
+        raycaster.setFromCamera(mouseVec, realCamera);
+        var intersects = raycaster.intersectObjects(scene.children, true);
+        pickedObject = null;
+        for (var i = 0; i < intersects.length; i++) {
+            if (pickedObject == null && 
+                intersects[i].object.parent.pointId) {
+                pickedObject = intersects[i].object;
+                break;
+            }
         }
     }
 
