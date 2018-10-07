@@ -30,6 +30,7 @@ function addPoint() {
     pointContainer.position.copy(cam.position);
     pointContainer.pointId = currentId++;
     scene.add(pointContainer);
+    return pointContainer;
 }
 
 // pt has "pointId" and "position"

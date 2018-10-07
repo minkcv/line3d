@@ -77,15 +77,27 @@ var clickMode = MODE.select;
 selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
 var pickedMoveAxis = AXIS.x;
+var autoConnect = true;
+var autoSelect = true;
 
 var rotateFactor = 100;
 var sprintFactor = 1;
 var zoomSpeed = 0.2;
 
-// Rotate, zoom, pan, act on keypresses, move, connect, disconnect points.
+// Rotate, zoom, pan, act on keypresses, move, connect, disconnect points, etc.
 function update() {
-    if (keys.a in keysUp)
-        addPoint();
+    if (keys.a in keysUp) {
+        var newPt = addPoint();
+        if (selectedPoint != null && autoConnect) {
+            var line = createLine(selectedPoint, newPt);
+            scene.add(line);
+        }
+        if (autoSelect) {
+            if (selectedPoint != null)
+                deselectPoint(selectedPoint);
+            selectPoint(newPt);
+        }
+    }
 
     if (keys.c in keysUp)
         connectMode();
@@ -137,8 +149,7 @@ function update() {
                         deselectPoint(selectedPoint); 
                     }
                     if (pickedMoveAxis == AXIS.none) {
-                        selectedPoint = pickedObject.parent;
-                        selectPoint(selectedPoint);
+                        selectPoint(pickedObject.parent);
                     }
                 }
                 else if (clickMode == MODE.delete) {
@@ -212,7 +223,7 @@ function update() {
 }
 
 function selectPoint(point) {
-    selectedPoint.children.forEach((c) => {
+    point.children.forEach((c) => {
         if (c.pointCube) {
             c.material = redMat;
         }
@@ -220,10 +231,11 @@ function selectPoint(point) {
             c.visible = true;
         }
     });
+    selectedPoint = point;
 }
 
 function deselectPoint(point) {
-    selectedPoint.children.forEach((c) => {
+    point.children.forEach((c) => {
         if (c.pointCube) {
             c.material = blueMat;
         }
@@ -330,6 +342,14 @@ function toggleCameraAxes(checkbox) {
     else {
         cam.remove(camAxes);
     }
+}
+
+function toggleAutoConnect(checkbox) {
+    autoConnect = checkbox.checked;
+}
+
+function toggleAutoSelect(checkbox) {
+    autoSelect = checkbox.checked;
 }
 
 function selectMode() {
