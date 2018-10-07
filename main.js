@@ -131,8 +131,10 @@ function update() {
                         // Deselect previously selected.
                         deselectPoint(selectedPoint); 
                     }
-                    selectedPoint = pickedObject.parent;
-                    selectPoint(selectedPoint);
+                    if (pickedMoveAxis == AXIS.none) {
+                        selectedPoint = pickedObject.parent;
+                        selectPoint(selectedPoint);
+                    }
                 }
             }
         }
