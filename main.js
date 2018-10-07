@@ -10,7 +10,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 // for when w is released.
 var keysDown = [];
 var keysUp = []; // Cleared every update.
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67}
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67, x: 88}
 addEventListener("keydown", function(e) {
     if (Object.values(keys).includes(e.keyCode))
         e.preventDefault();
@@ -72,7 +72,7 @@ raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
 var pickedObject = null; // Moused over object.
 var selectedPoint = null; // Clicked object parent.
-var MODE = {connect: 0, disconnect: 1, select: 2}
+var MODE = {connect: 0, disconnect: 1, select: 2, delete: 3}
 var clickMode = MODE.select;
 selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
@@ -93,6 +93,8 @@ function update() {
         selectMode();
     if (keys.d in keysUp)
         disconnectMode();
+    if (keys.x in keysUp)
+        deleteMode();
     
     if (keys.q in keysDown) {
         cam.rotation.y = 0;
@@ -138,6 +140,14 @@ function update() {
                         selectedPoint = pickedObject.parent;
                         selectPoint(selectedPoint);
                     }
+                }
+                else if (clickMode == MODE.delete) {
+                    var ptId = pickedObject.parent.pointId;
+                    scene.remove(pickedObject.parent);
+                    var linesToPoint = getLinesWithPoint(pickedObject.parent);
+                    linesToPoint.forEach((line) => {
+                        deleteLine2(line);
+                    });
                 }
             }
         }
@@ -335,6 +345,11 @@ function connectMode() {
 function disconnectMode() {
     clickMode = MODE.disconnect;
     document.getElementById('currentMode').innerHTML = 'DISCONNECT';
+}
+
+function deleteMode() {
+    clickMode = MODE.delete;
+    document.getElementById('currentMode').innerHTML = 'DELETE';
 }
 
 function animate() {

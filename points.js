@@ -1,4 +1,3 @@
-
 var currentId = 1;
 
 function addPoint() {

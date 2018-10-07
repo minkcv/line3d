@@ -28,6 +28,15 @@ function createLine(pt1, pt2) {
     return line;
 }
 
+function getLinesWithPoint(pt) {
+    var found = [];
+    lines.forEach((line) => {
+        if (line.id1 == pt.pointId || line.id2 == pt.pointId)
+            found.push(line);
+    });
+    return found;
+}
+
 // Args are like above
 function deleteLine(pt1, pt2) {
     var line = null;
@@ -44,4 +53,8 @@ function deleteLine(pt1, pt2) {
         lines.splice(index, 1);
         scene.remove(line);
     }
+}
+
+function deleteLine2(line) {
+    deleteLine({pointId: line.id1, position: line.pos1}, {pointId: line.id2, position: line.pos2});
 }
