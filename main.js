@@ -138,7 +138,7 @@ function update() {
         }
         if (selectedPoint != null) {
             var translate = getScreenTranslation();
-            if (translate.x != 0 && translate.y != 0 && translate.z != 0) {
+            if (translate.x != 0 || translate.y != 0 || translate.z != 0) {
                 translate.negate();
                 if (pickedObject != null && pickedMoveAxis == AXIS.none) {
                     if (pickedObject.xGrip) {
