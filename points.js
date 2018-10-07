@@ -32,3 +32,28 @@ function addPoint() {
     pointContainer.pointId = currentId++;
     scene.add(pointContainer);
 }
+
+// pt has "pointId" and "position"
+function movePoint(pt, translation, axis) {
+    var foundObjects = [];
+    lines.forEach((line) => {
+        if (line.id1 == pt.pointId) {
+            foundObjects.push({obj: line.obj, index: 0, point: line.pos1});
+        }
+        else if (line.id2 == pt.pointId) {
+            foundObjects.push({obj: line.obj, index: 1, point: line.pos2});
+        }
+    });
+    foundObjects.forEach((foundObj) => {
+        var newPoint = new THREE.Vector3();
+        newPoint.copy(foundObj.point);
+        if (axis == AXIS.x)
+            newPoint.x += translation;
+        if (axis == AXIS.y)
+            newPoint.y += translation;
+        if (axis == AXIS.z)
+            newPoint.z += translation;
+        foundObj.obj.geometry.vertices[foundObj.index] = newPoint;
+        foundObj.obj.geometry.verticesNeedUpdate = true;
+    });
+}

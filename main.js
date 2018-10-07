@@ -121,8 +121,10 @@ function update() {
         if (pickedObject != null) {
             if (pickedObject.pointCube) {
                 if (clickMode == MODE.connect) {
-                    var line = createLine(selectedPoint.position, pickedObject.parent.position);
-                    scene.add(line);
+                    var line = createLine(selectedPoint, pickedObject.parent);
+                    if (line != null) {// Happens when line exists
+                        scene.add(line);
+                    }
                 }
                 else if(clickMode == MODE.select) {
                     if (selectedPoint != null) {
@@ -136,25 +138,31 @@ function update() {
         }
         if (selectedPoint != null) {
             var translate = getScreenTranslation();
-            if (pickedObject != null && pickedMoveAxis == AXIS.none) {
-                if (pickedObject.xGrip) {
-                    pickedMoveAxis = AXIS.x;
+            if (translate.x != 0 && translate.y != 0 && translate.z != 0) {
+                translate.negate();
+                if (pickedObject != null && pickedMoveAxis == AXIS.none) {
+                    if (pickedObject.xGrip) {
+                        pickedMoveAxis = AXIS.x;
+                    }
+                    if (pickedObject.yGrip) {
+                        pickedMoveAxis = AXIS.y;
+                    }
+                    if (pickedObject.zGrip) {
+                        pickedMoveAxis = AXIS.z;
+                    }
                 }
-                if (pickedObject.yGrip) {
-                    pickedMoveAxis = AXIS.y;
+                if (pickedMoveAxis == AXIS.x) {
+                    selectedPoint.translateX(translate.x);
+                    movePoint(selectedPoint, translate.x, AXIS.x);
                 }
-                if (pickedObject.zGrip) {
-                    pickedMoveAxis = AXIS.z;
+                if (pickedMoveAxis == AXIS.y) {
+                    selectedPoint.translateY(translate.y);
+                    movePoint(selectedPoint, translate.y, AXIS.y);
                 }
-            }
-            if (pickedMoveAxis == AXIS.x) {
-                selectedPoint.translateX(-translate.x);
-            }
-            if (pickedMoveAxis == AXIS.y) {
-                selectedPoint.translateY(-translate.y);
-            }
-            if (pickedMoveAxis == AXIS.z) {
-                selectedPoint.translateZ(-translate.z);
+                if (pickedMoveAxis == AXIS.z) {
+                    selectedPoint.translateZ(translate.z);
+                    movePoint(selectedPoint, translate.z, AXIS.z);
+                }
             }
         }
     }
