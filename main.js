@@ -127,7 +127,7 @@ function update() {
                     }
                 }
                 else if (clickMode == MODE.disconnect) {
-                    deleteLine(selectedPoint, pickedObjec.parent);
+                    deleteLine(selectedPoint, pickedObject.parent);
                 }
                 else if(clickMode == MODE.select) {
                     if (selectedPoint != null && pickedMoveAxis == AXIS.none) {

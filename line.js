@@ -30,11 +30,18 @@ function createLine(pt1, pt2) {
 
 // Args are like above
 function deleteLine(pt1, pt2) {
-    var existing = null;
-    lines.forEach((existing) => {
-        if ((existing.id1 == pt1.pointId && existing.id2 == pt2.pointId) ||
-            (existing.id1 == pt2.pointId && existing.id2 == pt1.pointId)) {
-                exists = true;
+    var line = null;
+    var index = -1;
+    for (var i = 0; i < lines.length; i++) {
+        var current = lines[i];
+        if ((current.id1 == pt1.pointId && current.id2 == pt2.pointId) ||
+            (current.id1 == pt2.pointId && current.id2 == pt1.pointId)) {
+                line = current.obj;
+                index = i;
         }
-    });
+    }
+    if (line != null && index >= 0) {
+        lines.splice(index, 1);
+        scene.remove(line);
+    }
 }
