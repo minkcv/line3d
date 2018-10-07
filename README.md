@@ -12,4 +12,4 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Export to Wavefront obj
 
 ### Screenshot
-![screenshot](./screenshot.png)
+![screenshot](./screenshot.PNG)
