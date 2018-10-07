@@ -126,8 +126,11 @@ function update() {
                         scene.add(line);
                     }
                 }
+                else if (clickMode == MODE.disconnect) {
+                    deleteLine(selectedPoint, pickedObjec.parent);
+                }
                 else if(clickMode == MODE.select) {
-                    if (selectedPoint != null) {
+                    if (selectedPoint != null && pickedMoveAxis == AXIS.none) {
                         // Deselect previously selected.
                         deselectPoint(selectedPoint); 
                     }

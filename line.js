@@ -8,7 +8,7 @@ function createLine(pt1, pt2) {
         if ((existing.id1 == pt1.pointId && existing.id2 == pt2.pointId) ||
             (existing.id1 == pt2.pointId && existing.id2 == pt1.pointId)) {
                 exists = true;
-            }
+        }
     });
     if (exists)
         return null;
@@ -26,4 +26,15 @@ function createLine(pt1, pt2) {
     };
     lines.push(lineData);
     return line;
+}
+
+// Args are like above
+function deleteLine(pt1, pt2) {
+    var existing = null;
+    lines.forEach((existing) => {
+        if ((existing.id1 == pt1.pointId && existing.id2 == pt2.pointId) ||
+            (existing.id1 == pt2.pointId && existing.id2 == pt1.pointId)) {
+                exists = true;
+        }
+    });
 }
