@@ -7,6 +7,7 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Create, delete, connect, disconnect, and move points.
 - Rotate, zoom, and pan an orthographic camera.
 - Saving/loading meshes
+- Custom Grid Snapping
 
 ### TODO
 - Export to Wavefront obj
