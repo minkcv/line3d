@@ -12,8 +12,6 @@ var keysDown = [];
 var keysUp = []; // Cleared every update.
 var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67, x: 88}
 addEventListener("keydown", function(e) {
-    if (Object.values(keys).includes(e.keyCode))
-        e.preventDefault();
     keysDown[e.keyCode] = true;
     delete keysUp[e.keyCode];
 }, false);
@@ -89,8 +87,7 @@ function update() {
     if (keys.a in keysUp) {
         var newPt = addPoint();
         if (selectedPoint != null && autoConnect) {
-            var line = createLine(selectedPoint, newPt);
-            scene.add(line);
+            createLine(selectedPoint, newPt);
         }
         if (autoSelect) {
             if (selectedPoint != null)
@@ -370,6 +367,52 @@ function disconnectMode() {
 function deleteMode() {
     clickMode = MODE.delete;
     document.getElementById('currentMode').innerHTML = 'DELETE';
+}
+
+function saveJSON() {
+    var textbox = document.getElementById('loadsave');
+    var simpleLines = [];
+    lines.forEach((line) => {
+        simpleLines.push({
+            id1: line.id1,
+            id2: line.id2,
+            pos1: line.pos1,
+            pos2: line.pos2
+        });
+    });
+    textbox.value = JSON.stringify(simpleLines);
+}
+
+function loadJSON() {
+    var textbox = document.getElementById('loadsave');
+    var simpleLines = JSON.parse(textbox.value);
+    if (simpleLines == null)
+        return;
+
+    var points = [];
+    simpleLines.forEach((line) => {
+        var pt1 = {pointId: line.id1, position: line.pos1};
+        var pt2 = {pointId: line.id2, position: line.pos2};
+        var pt1exists = false;
+        var pt2exists = false;
+        points.forEach((existing) => {
+            if (existing.pointId == pt1.pointId)
+                pt1exists = true;
+            if (existing.pointId == pt2.pointId)
+                pt2exists = true;
+        });
+        if (!pt1exists) {
+            addPointXYZ(pt1);
+            points.push(pt1);
+        }
+        if (!pt2exists) {
+            addPointXYZ(pt2);
+            points.push(pt2);
+        }
+    });
+    simpleLines.forEach((line) => {
+        createLine({pointId: line.id1, position: line.pos1}, {pointId: line.id2, position: line.pos2});
+    })
 }
 
 function animate() {

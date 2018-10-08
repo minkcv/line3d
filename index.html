@@ -39,6 +39,12 @@
             <label for='toggleAutoSelect'>Auto Select New Points</label><br>
             <input type="checkbox" id='toggleAutoConnect' onchange='toggleAutoConnect(this)' checked>
             <label for='toggleAutoConnect'>Auto Connect New Points</label><br>
+            <p>
+                Loading/Saving
+                <button onclick='saveJSON()'>Save to JSON</button>
+                <input type="text" id='loadsave'>
+                <button onclick='loadJSON()'>Load from JSON</button>
+            </p>
         </div>
         <a href="http://minkcv.com" id='author'>minkcv.com</a>
     </div>

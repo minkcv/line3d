@@ -13,18 +13,21 @@ function createLine(pt1, pt2) {
     if (exists)
         return null;
     var geom = new THREE.Geometry();
-    geom.vertices.push(pt1.position);
-    geom.vertices.push(pt2.position);
+    var v1 = new THREE.Vector3(pt1.position.x, pt1.position.y, pt1.position.z);
+    var v2 = new THREE.Vector3(pt2.position.x, pt2.position.y, pt2.position.z);
+    geom.vertices.push(v1);
+    geom.vertices.push(v2);
     var line = new THREE.Line(geom, whiteLineMat);
     var lineData = {
         obj: line,
         geometry: line.geometry,
         id1: pt1.pointId,
         id2: pt2.pointId,
-        pos1: pt1.position,
-        pos2: pt2.position
+        pos1: v1,
+        pos2: v2
     };
     lines.push(lineData);
+    scene.add(line);
     return line;
 }
 
