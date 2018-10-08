@@ -21,6 +21,20 @@ addEventListener("keyup", function(e) {
     keysUp[e.keyCode] = true;
 }, false);
 
+addEventListener("resize", function(e) {
+    width = threediv.clientWidth;
+    height = threediv.clientHeight;
+    renderer.setSize(width, height);
+    var zoom = realCamera.zoom;
+    realCamera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);
+    camera.add(realCamera);
+    realCamera.translateZ(2000);
+    cam.add(camera);
+    realCamera.zoom = zoom;
+    realCamera.updateProjectionMatrix();
+    scene.add(cam);
+}, false);
+
 // THREE.js materials
 var whiteLineMat = new THREE.LineBasicMaterial({color: 0xffffff});
 var redLineMat = new THREE.LineBasicMaterial({color: 0xff0000});
@@ -49,6 +63,7 @@ camera.add(realCamera);
 realCamera.translateZ(2000);
 cam.add(camera);
 scene.add(cam);
+
 var camAxes = new THREE.AxesHelper(50, 0.5);
 cam.add(camAxes);
 var originAxes = new THREE.AxesHelper(50);
