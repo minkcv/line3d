@@ -4,7 +4,7 @@
     <title>Line 3D</title>
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="three/three.js"></script>
-    
+    <script src="events.js"></script>
 </head>
 <body>
     <div id='left'>
@@ -35,6 +35,8 @@
             <label for='toggleAxes'>Show World Axes</label><br>
             <input type="checkbox" id='toggleCameraAxes' onchange='toggleCameraAxes(this)' checked>
             <label for='toggleCameraAxes'>Show Camera Axes</label><br>
+            <input type='checkbox', id='togglePointControls' onchange='togglePointControls(this)' checked>
+            <label for='togglePointControls'>Show Point Controls</label><br>
             <input type="checkbox" id='toggleAutoSelect' onchange='toggleAutoSelect(this)' checked>
             <label for='toggleAutoSelect'>Auto Select New Points</label><br>
             <input type="checkbox" id='toggleAutoConnect' onchange='toggleAutoConnect(this)' checked>
@@ -59,6 +61,7 @@
         onmouseout='threeOut(event)'>
         </div>
     </div>
+    
     <script src="main.js"></script>
     <script src="points.js"></script>
     <script src="line.js"></script>
