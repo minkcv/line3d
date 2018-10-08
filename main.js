@@ -365,6 +365,8 @@ function toggleAutoSelect(checkbox) {
 
 function changeGridSnapDistance(textbox) {
     snapDistance = parseInt(textbox.value);
+    if (isNaN(snapDistance))
+        snapDistance = 0;
 }
 
 function selectMode() {
