@@ -164,17 +164,17 @@ function update() {
             if (translate.x != 0 || translate.y != 0 || translate.z != 0) {
                 translate.negate();
                 if (pickedMoveAxis == AXIS.x) {
-                    selectedPoint.translateX(translate.x);
                     movePoint(selectedPoint, translate.x, AXIS.x);
+                    selectedPoint.translateX(translate.x);
                     
                 }
                 if (pickedMoveAxis == AXIS.y) {
-                    selectedPoint.translateY(translate.y);
                     movePoint(selectedPoint, translate.y, AXIS.y);
+                    selectedPoint.translateY(translate.y);
                 }
                 if (pickedMoveAxis == AXIS.z) {
-                    selectedPoint.translateZ(translate.z);
                     movePoint(selectedPoint, translate.z, AXIS.z);
+                    selectedPoint.translateZ(translate.z);
                 }
             }
         }
@@ -232,7 +232,7 @@ function deselectPoint(point) {
     });
 }
 
-var snapDistance = 50;
+var snapDistance = 0;
 var snapTranslate = new THREE.Vector3();
 function getScreenTranslation() {
     // Translate 2D screen movement into the appropriate 3D movement.
@@ -248,8 +248,10 @@ function getScreenTranslation() {
         viewUp.y * -mouseDY,
         viewUp.z * -mouseDY + viewRight.z * -mouseDX);
     translate.multiplyScalar(1 / realCamera.zoom);
-    snapTranslate.add(translate);
+    if (snapDistance <= 0) // No snapping
+        return translate;
     var snapped = new THREE.Vector3();
+    snapTranslate.add(translate);
     if (Math.abs(snapTranslate.x) > snapDistance) {
         snapped.x = snapDistance * sign(snapTranslate.x);
         snapTranslate.x = 0;
@@ -361,6 +363,10 @@ function toggleAutoSelect(checkbox) {
     autoSelect = checkbox.checked;
 }
 
+function changeGridSnapDistance(textbox) {
+    snapDistance = parseInt(textbox.value);
+}
+
 function selectMode() {
     clickMode = MODE.select;
     document.getElementById('currentMode').innerHTML = 'SELECT';
@@ -441,14 +447,16 @@ function animate() {
             if (pickedObject == null && mouseDown &&
                 intersects[i].object.parent.pointId) {
                 pickedObject = intersects[i].object;
-                if (pickedObject.xGrip) {
-                    pickedMoveAxis = AXIS.x;
-                }
-                if (pickedObject.yGrip) {
-                    pickedMoveAxis = AXIS.y;
-                }
-                if (pickedObject.zGrip) {
-                    pickedMoveAxis = AXIS.z;
+                if (pickedMoveAxis == AXIS.none) {
+                    if (pickedObject.xGrip) {
+                        pickedMoveAxis = AXIS.x;
+                    }
+                    if (pickedObject.yGrip) {
+                        pickedMoveAxis = AXIS.y;
+                    }
+                    if (pickedObject.zGrip) {
+                        pickedMoveAxis = AXIS.z;
+                    }
                 }
                 break;
             }
