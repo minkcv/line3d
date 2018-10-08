@@ -74,7 +74,7 @@ var MODE = {connect: 0, disconnect: 1, select: 2, delete: 3}
 var clickMode = MODE.select;
 selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
-var pickedMoveAxis = AXIS.x;
+var pickedMoveAxis = AXIS.none;
 var autoConnect = true;
 var autoSelect = true;
 
@@ -163,20 +163,10 @@ function update() {
             var translate = getScreenTranslation();
             if (translate.x != 0 || translate.y != 0 || translate.z != 0) {
                 translate.negate();
-                if (pickedObject != null && pickedMoveAxis == AXIS.none) {
-                    if (pickedObject.xGrip) {
-                        pickedMoveAxis = AXIS.x;
-                    }
-                    if (pickedObject.yGrip) {
-                        pickedMoveAxis = AXIS.y;
-                    }
-                    if (pickedObject.zGrip) {
-                        pickedMoveAxis = AXIS.z;
-                    }
-                }
                 if (pickedMoveAxis == AXIS.x) {
                     selectedPoint.translateX(translate.x);
                     movePoint(selectedPoint, translate.x, AXIS.x);
+                    
                 }
                 if (pickedMoveAxis == AXIS.y) {
                     selectedPoint.translateY(translate.y);
@@ -242,6 +232,8 @@ function deselectPoint(point) {
     });
 }
 
+var snapDistance = 50;
+var snapTranslate = new THREE.Vector3();
 function getScreenTranslation() {
     // Translate 2D screen movement into the appropriate 3D movement.
     // Holy crap this was difficult to figure out.
@@ -256,7 +248,27 @@ function getScreenTranslation() {
         viewUp.y * -mouseDY,
         viewUp.z * -mouseDY + viewRight.z * -mouseDX);
     translate.multiplyScalar(1 / realCamera.zoom);
-    return translate;
+    snapTranslate.add(translate);
+    var snapped = new THREE.Vector3();
+    if (Math.abs(snapTranslate.x) > snapDistance) {
+        snapped.x = snapDistance * sign(snapTranslate.x);
+        snapTranslate.x = 0;
+    }
+    if (Math.abs(snapTranslate.y) > snapDistance) {
+        snapped.y = snapDistance * sign(snapTranslate.y);
+        snapTranslate.y = 0;
+    }
+    if (Math.abs(snapTranslate.z) > snapDistance) {
+        snapped.z = snapDistance * sign(snapTranslate.z);
+        snapTranslate.z = 0;
+    }
+    return snapped;
+}
+
+function sign(n) {
+    if (n < 0)
+        return -1;
+    return 1;
 }
 
 function getUpVector(dir, xr, yr) {
@@ -426,9 +438,18 @@ function animate() {
         var intersects = raycaster.intersectObjects(scene.children, true);
         pickedObject = null;
         for (var i = 0; i < intersects.length; i++) {
-            if (pickedObject == null && 
+            if (pickedObject == null && mouseDown &&
                 intersects[i].object.parent.pointId) {
                 pickedObject = intersects[i].object;
+                if (pickedObject.xGrip) {
+                    pickedMoveAxis = AXIS.x;
+                }
+                if (pickedObject.yGrip) {
+                    pickedMoveAxis = AXIS.y;
+                }
+                if (pickedObject.zGrip) {
+                    pickedMoveAxis = AXIS.z;
+                }
                 break;
             }
         }
