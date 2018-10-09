@@ -4,13 +4,15 @@ Draw wireframe meshes in the browser. Requires WebGL
 [minkcv.github.io/line3d/](https://minkcv.github.io/line3d/)
 
 ### Features
-- Create, delete, connect, disconnect, and move points.
-- Rotate, zoom, and pan an orthographic camera.
+- Create, delete, connect, disconnect, and move points
+- Rotate, zoom, and pan an orthographic camera
 - Saving/loading meshes
 - Custom Grid Snapping
+- Mirror about XY plane
 
 ### TODO
 - Export to Wavefront obj
 
-### Screenshot
+### Screenshots
 ![screenshot](./screenshot.PNG)
+![screenshot](./screenshot2.PNG)
