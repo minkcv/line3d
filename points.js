@@ -62,8 +62,12 @@ function addPointXYZ(pt) {
     pointContainer.add(cube);
     var newPos = new THREE.Vector3(pt.position.x, pt.position.y, pt.position.z);
     pointContainer.position.copy(newPos);
-    pointContainer.pointId = pt.pointId;
-    currentId = Math.max(currentId, pt.pointId);
+    if (pt.pointId) {
+        pointContainer.pointId = pt.pointId;
+        currentId = Math.max(currentId, pt.pointId);
+    }
+    else 
+        pointContainer.pointId = currentId;
     currentId++;
     scene.add(pointContainer);
     return pointContainer;
@@ -75,9 +79,11 @@ function movePoint(pt, translation, axis) {
     lines.forEach((line) => {
         if (line.id1 == pt.pointId) {
             foundObjects.push({obj: line.obj, index: 0, point: pt.position});
+            line.pos1 = pt.position;
         }
         else if (line.id2 == pt.pointId) {
             foundObjects.push({obj: line.obj, index: 1, point: pt.position});
+            line.pos2 = pt.position;
         }
     });
     foundObjects.forEach((foundObj) => {
