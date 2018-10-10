@@ -200,46 +200,59 @@ function mirrorXY() {
 
 function saveJSON() {
     var textbox = document.getElementById('loadsave');
-    var simpleLines = [];
+    var points = [];
     lines.forEach((line) => {
-        simpleLines.push({
-            id1: line.id1,
-            id2: line.id2,
-            pos1: line.pos1,
-            pos2: line.pos2
+        var pt1 = {id: line.id1, pos: line.pos1, conn: []};
+        var pt2 = {id: line.id2, pos: line.pos2, conn: []};
+        var pt1exists = false;
+        var pt2exists = false;
+        points.forEach((existing) => {
+            if (existing.pointId == pt1.id)
+                pt1exists = true;
+            if (existing.pointId == pt2.id)
+                pt2exists = true;
         });
+        if (!pt1exists) {
+            points.push(pt1);
+        }
+        if (!pt2exists) {
+            points.push(pt2);
+        }
     });
-    textbox.value = JSON.stringify(simpleLines);
+    lines.forEach((line) => {
+        points.forEach((point) => {
+            if (line.id1 == point.id) {
+                if (point.conn.indexOf(line.id2) < 0)
+                    point.conn.push(line.id2);
+            }
+            if (line.id2 == point.id) {
+                if (point.conn.indexOf(line.id1) < 0)
+                    point.conn.push(line.id1);
+            }
+        })
+    });
+    textbox.value = JSON.stringify(points);
 }
 
 function loadJSON() {
     var textbox = document.getElementById('loadsave');
-    var simpleLines = JSON.parse(textbox.value);
-    if (simpleLines == null)
-        return;
-
-    var points = [];
-    simpleLines.forEach((line) => {
-        var pt1 = {pointId: line.id1, position: line.pos1};
-        var pt2 = {pointId: line.id2, position: line.pos2};
-        var pt1exists = false;
-        var pt2exists = false;
-        points.forEach((existing) => {
-            if (existing.pointId == pt1.pointId)
-                pt1exists = true;
-            if (existing.pointId == pt2.pointId)
-                pt2exists = true;
-        });
-        if (!pt1exists) {
-            addPointXYZ(pt1);
-            points.push(pt1);
-        }
-        if (!pt2exists) {
-            addPointXYZ(pt2);
-            points.push(pt2);
-        }
+    var points = JSON.parse(textbox.value);
+    points.forEach((point) => {
+        var pt = {pointId: point.id, position: point.pos};
+        addPointXYZ(pt);
     });
-    simpleLines.forEach((line) => {
-        createLine({pointId: line.id1, position: line.pos1}, {pointId: line.id2, position: line.pos2});
-    })
+    points.forEach((point) => {
+        point.conn.forEach((otherId) => {
+            var other = null;
+            points.forEach((candidate) => {
+                if (candidate.id == otherId)
+                    other = candidate;
+            });
+            if (other != null) {
+                var pt1 = {pointId: point.id, position: point.pos};
+                var pt2 = {pointId: other.id, position: other.pos};
+                createLine(pt1, pt2);
+            }
+        });
+    });
 }
