@@ -16,3 +16,4 @@ Draw wireframe meshes in the browser. Requires WebGL
 ### Screenshots
 ![screenshot](./screenshot.PNG)
 ![screenshot](./screenshot2.PNG)
+![screenshot](./screenshot3.PNG)
