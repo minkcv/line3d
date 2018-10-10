@@ -47,7 +47,7 @@ var raycaster = new THREE.Raycaster();
 raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
 var pickedObject = null; // Moused over object.
-var selectedPoint = null; // Clicked object parent.
+var selectedPoints = [];
 var MODE = {connect: 0, disconnect: 1, select: 2, delete: 3}
 var clickMode = MODE.select;
 selectMode();
@@ -55,6 +55,7 @@ var AXIS = {x: 0, y: 1, z: 2, none: 3};
 var pickedMoveAxis = AXIS.none;
 var autoConnect = true;
 var autoSelect = true;
+var autoDeselect = true;
 
 var rotateFactor = 100;
 var sprintFactor = 1;
@@ -64,12 +65,15 @@ var zoomSpeed = 0.2;
 function update() {
     if (keys.a in keysUp) {
         var newPt = addPoint();
-        if (selectedPoint != null && autoConnect) {
-            createLine(selectedPoint, newPt);
+        if (selectedPoints.length > 0 && autoConnect) {
+            selectedPoints.forEach((point) => {
+                createLine(point, newPt);
+            })
         }
         if (autoSelect) {
-            if (selectedPoint != null)
-                deselectPoint(selectedPoint);
+            if (autoDeselect && selectedPoints.length > 0) {
+                selectNoneAll();
+            }
             selectPoint(newPt);
         }
     }
@@ -82,6 +86,9 @@ function update() {
         disconnectMode();
     if (keys.x in keysUp)
         deleteMode();
+    if (keys.z in keysUp)
+        selectNoneAll();
+    
     
     if (keys.q in keysDown) {
         cam.rotation.y = 0;
@@ -106,25 +113,31 @@ function update() {
     if (keys.t in keysDown) {
         cam.position.set(0, 0, 0);
     }
-    if (mouseButton == 0) { // Select or move points - Left click
+    if (mouseButton == 0) { // Mode action or move points - Left click
         if (pickedObject != null) {
             if (pickedObject.pointCube) {
                 if (clickMode == MODE.connect) {
-                    var line = createLine(selectedPoint, pickedObject.parent);
-                    if (line != null) {// Happens when line exists
-                        scene.add(line);
-                    }
+                    selectedPoints.forEach((point) => {
+                        var line = createLine(point, pickedObject.parent);
+                    });
                 }
                 else if (clickMode == MODE.disconnect) {
-                    deleteLine(selectedPoint, pickedObject.parent);
+                    selectedPoints.forEach((point) => {
+                        deleteLine(point, pickedObject.parent);
+                    });
                 }
-                else if(clickMode == MODE.select) {
-                    if (selectedPoint != null && pickedMoveAxis == AXIS.none) {
-                        // Deselect previously selected.
-                        deselectPoint(selectedPoint); 
-                    }
+                else if (clickMode == MODE.select && mouseWasDown) {
+                    mouseWasDown = false;
+                    var selected = false;
+                    selectedPoints.forEach((existing) => {
+                        if (existing.pointId == pickedObject.parent.pointId)
+                            selected = true;
+                    });
                     if (pickedMoveAxis == AXIS.none) {
-                        selectPoint(pickedObject.parent);
+                        if (selected)
+                            deselectPoint(pickedObject.parent); 
+                        else
+                            selectPoint(pickedObject.parent);
                     }
                 }
                 else if (clickMode == MODE.delete) {
@@ -137,23 +150,24 @@ function update() {
                 }
             }
         }
-        if (selectedPoint != null) {
+        if (selectedPoints.length > 0) {
             var translate = getScreenTranslation();
             if (translate.x != 0 || translate.y != 0 || translate.z != 0) {
                 translate.negate();
-                if (pickedMoveAxis == AXIS.x) {
-                    movePoint(selectedPoint, translate.x, AXIS.x);
-                    selectedPoint.translateX(translate.x);
-                    
-                }
-                if (pickedMoveAxis == AXIS.y) {
-                    movePoint(selectedPoint, translate.y, AXIS.y);
-                    selectedPoint.translateY(translate.y);
-                }
-                if (pickedMoveAxis == AXIS.z) {
-                    movePoint(selectedPoint, translate.z, AXIS.z);
-                    selectedPoint.translateZ(translate.z);
-                }
+                selectedPoints.forEach((point) => {
+                    if (pickedMoveAxis == AXIS.x) {
+                        movePoint(point, translate.x, AXIS.x);
+                        point.translateX(translate.x);
+                    }
+                    if (pickedMoveAxis == AXIS.y) {
+                        movePoint(point, translate.y, AXIS.y);
+                        point.translateY(translate.y);
+                    }
+                    if (pickedMoveAxis == AXIS.z) {
+                        movePoint(point, translate.z, AXIS.z);
+                        point.translateZ(translate.z);
+                    }
+                })
             }
         }
     }
@@ -196,7 +210,15 @@ function selectPoint(point) {
             c.visible = true;
         }
     });
-    selectedPoint = point;
+    var index = -1;
+    for (var i = 0; i < selectedPoints.length; i++) {
+        if (selectedPoints[i].pointId == point.pointId) {
+            index = i;
+            break;
+        }
+    }
+    if (index < 0)
+        selectedPoints.push(point);
 }
 
 function deselectPoint(point) {
@@ -208,6 +230,15 @@ function deselectPoint(point) {
             c.visible = false;
         }
     });
+    var index = -1;
+    for (var i = 0; i < selectedPoints.length; i++) {
+        if (selectedPoints[i].pointId == point.pointId) {
+            index = i;
+            break;
+        }
+    }
+    if (index >= 0)
+        selectedPoints.splice(index, 1);
 }
 
 var snapDistance = 0;

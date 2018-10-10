@@ -43,6 +43,7 @@ var mouseDX = 0;
 var mouseDY = 0;
 var mouseDZ = 0; // Scroll wheel
 var mouseDown = false;
+var mouseWasDown = false;
 
 function threeDown(event) {
     event.preventDefault();
@@ -56,6 +57,7 @@ function threeUp(event) {
     event.preventDefault();
     mouseButton = -1;
     mouseDown = false;
+    mouseWasDown = true;
     pickedMoveAxis = AXIS.none;
     mouseX = event.clientX;
     mouseY = event.clientY;
@@ -132,6 +134,10 @@ function toggleAutoSelect(checkbox) {
     autoSelect = checkbox.checked;
 }
 
+function toggleAutoDeselect(checkbox) {
+    autoDeselect = checkbox.checked;
+}
+
 function changeGridSnapDistance(textbox) {
     snapDistance = parseInt(textbox.value);
     if (isNaN(snapDistance))
@@ -156,6 +162,21 @@ function disconnectMode() {
 function deleteMode() {
     clickMode = MODE.delete;
     document.getElementById('currentMode').innerHTML = 'DELETE';
+}
+
+function selectNoneAll() {
+    var points = selectedPoints.slice();
+    if (points.length > 0) {
+        points.forEach((point) => {
+            deselectPoint(point);
+        });
+    }
+    else {
+        scene.children.forEach((child) => {
+            if (child.pointId)
+                selectPoint(child);
+        });
+    }
 }
 
 function mirrorXY() {
@@ -207,9 +228,9 @@ function saveJSON() {
         var pt1exists = false;
         var pt2exists = false;
         points.forEach((existing) => {
-            if (existing.pointId == pt1.id)
+            if (existing.id == pt1.id)
                 pt1exists = true;
-            if (existing.pointId == pt2.id)
+            if (existing.id == pt2.id)
                 pt2exists = true;
         });
         if (!pt1exists) {

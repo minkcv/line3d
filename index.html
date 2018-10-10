@@ -21,6 +21,7 @@
             <li>T: Recenter Camera</li>
             <br>
             <li>A: <button onclick='addPoint()'>Add Point</button></li>
+            <li>Z: <button onclick='selectNoneAll()'>Select None/All</button></li>
             <br>
             <p>Change Mode:</p>
             <li>S: <button onclick='selectMode()'>Select Points</button></li>
@@ -39,6 +40,8 @@
             <label for='togglePointControls'>Show Point Controls</label><br>
             <input type="checkbox" id='toggleAutoSelect' onchange='toggleAutoSelect(this)' checked>
             <label for='toggleAutoSelect'>Auto Select New Points</label><br>
+            <input type="checkbox" id='toggleAutoDeselect' onchange='toggleAutoDeselect(this)' checked>
+            <label for='toggleAutoDeselect'>Auto Deselect Previous Points</label><br>
             <input type="checkbox" id='toggleAutoConnect' onchange='toggleAutoConnect(this)' checked>
             <label for='toggleAutoConnect'>Auto Connect New Points</label><br>
             <label for='gridSnapDistance'>Grid Snap Distance</label>
