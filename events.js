@@ -119,8 +119,14 @@ function togglePointControls(checkbox) {
 function togglePointControlsRecursive(object, onoff) {
     if (object.pointCube)
         object.visible = onoff;
-    if (object.xGrip || object.yGrip || object.zGrip)
-        object.visible = onoff && selectedPoint != null && object.parent.pointId == selectedPoint.pointId;
+    if (object.xGrip || object.yGrip || object.zGrip) {
+        var selected = false;
+        selectedPoints.forEach((point) => {
+            if (object.parent.pointId == point.pointId)
+                selected = true;
+        })
+        object.visible = onoff && selected;
+    }
     object.children.forEach((child) => {
         togglePointControlsRecursive(child, onoff);
     })
