@@ -141,6 +141,7 @@ function update() {
                     }
                 }
                 else if (clickMode == MODE.delete) {
+                    deselectPoint(pickedObject.parent);
                     var ptId = pickedObject.parent.pointId;
                     scene.remove(pickedObject.parent);
                     var linesToPoint = getLinesWithPoint(pickedObject.parent);
