@@ -48,7 +48,7 @@ raycaster.linePrecision = 5;
 var mouseVec = new THREE.Vector2();
 var pickedObject = null; // Moused over object.
 var selectedPoints = [];
-var MODE = {connect: 0, disconnect: 1, select: 2, delete: 3}
+var MODE = {connect: 0, disconnect: 1, select: 2, delete: 3, boxSelect: 4}
 var clickMode = MODE.select;
 selectMode();
 var AXIS = {x: 0, y: 1, z: 2, none: 3};
@@ -56,6 +56,9 @@ var pickedMoveAxis = AXIS.none;
 var autoConnect = true;
 var autoSelect = true;
 var autoDeselect = true;
+var boxStartX;
+var boxStartY;
+var boxStarted = false;
 
 var rotateFactor = 100;
 var sprintFactor = 1;
@@ -86,6 +89,8 @@ function update() {
         disconnectMode();
     if (keys.x in keysUp)
         deleteMode();
+    if (keys.b in keysUp)
+        boxSelectMode();
     if (keys.z in keysUp)
         selectNoneAll();
     
@@ -114,7 +119,47 @@ function update() {
         cam.position.set(0, 0, 0);
     }
     if (mouseButton == 0) { // Mode action or move points - Left click
-        if (pickedObject != null) {
+        if (clickMode == MODE.boxSelect) {
+            if (mouseDown && !boxStarted) {
+                boxStartX = mouseX;
+                boxStartY = mouseY;
+                boxStarted = true;
+            }
+            if (boxStarted && !mouseDown) {
+                var width = Math.abs(mouseX - boxStartX);
+                var height = Math.abs(mouseY - boxStartY);
+                var depth = 4000;
+                var geom = new THREE.BoxGeometry(width / realCamera.zoom, height / realCamera.zoom, depth);
+                var box = new THREE.Mesh(geom, blueMat);
+                var tx = (boxStartX - threediv.offsetLeft) - (threediv.clientWidth / 2);
+                var ty = boxStartY - (threediv.clientHeight / 2);
+                mouseDX = tx + (width / 2) * sign(mouseX - boxStartX);
+                mouseDY = ty + (height / 2) * sign(mouseY - boxStartY);
+                var boxTranslate = getScreenTranslation();
+                box.position.copy(boxTranslate);
+                box.position.add(cam.position);
+                box.rotation.y = cam.rotation.y;
+                box.rotateX(camera.rotation.x);
+                box.geometry.computeBoundingBox();
+                box.updateMatrixWorld(true);
+                var boxMatrixInverse = new THREE.Matrix4().getInverse(box.matrixWorld);
+                var inverseBox = box.clone();
+                inverseBox.applyMatrix(boxMatrixInverse);
+                var bb = new THREE.Box3().setFromObject(inverseBox);
+                //scene.add(box);
+                scene.children.forEach((child) => {
+                    if (child.pointId) {
+                        var inversePoint = child.position.clone();
+                        inversePoint.applyMatrix4(boxMatrixInverse);
+                        var isInside = bb.containsPoint(inversePoint);
+                        if (isInside)
+                            selectPoint(child);
+                    }
+                })
+                boxStarted = false;
+            }
+        }
+        else if (pickedObject != null) {
             if (pickedObject.pointCube) {
                 if (clickMode == MODE.connect) {
                     selectedPoints.forEach((point) => {
@@ -303,7 +348,7 @@ function animate() {
         var intersects = raycaster.intersectObjects(scene.children, true);
         pickedObject = null;
         for (var i = 0; i < intersects.length; i++) {
-            if (pickedObject == null && mouseDown &&
+            if (pickedObject == null && mouseDown && !boxStarted &&
                 intersects[i].object.parent.pointId) {
                 pickedObject = intersects[i].object;
                 if (pickedMoveAxis == AXIS.none) {
