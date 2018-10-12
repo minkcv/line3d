@@ -129,7 +129,6 @@ function update() {
                 selectionBox.style.top = boxStartY + 'px';
                 selectionBox.style.display = 'block';
             }
-            console.log(mouseDown);
             if (boxStarted) {
                 var width = mouseX - boxStartX;
                 var height = mouseY - boxStartY;

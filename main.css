@@ -19,6 +19,7 @@ h3, #controls, p {
     float: left;
     width: 20%;
     height: 100%;
+    overflow: auto;
 }
 #right {
     float: right;
@@ -31,10 +32,6 @@ h3, #controls, p {
 }
 a:visited, a:link{
     color: #ffffff;
-}
-#author {
-    position: absolute;
-    bottom: 0px;
 }
 #currentMode {
     color: #ff0000;
