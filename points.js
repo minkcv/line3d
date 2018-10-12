@@ -99,3 +99,23 @@ function movePoint(pt, translation, axis) {
         foundObj.obj.geometry.verticesNeedUpdate = true;
     });
 }
+
+function getPointById(id) {
+    var found = null;
+    scene.children.forEach((child) => {
+        if (child.pointId == id)
+            found = child;
+    });
+    return found;
+}
+
+function getConnectedPoints(pt) {
+    var connectedPoints = [];
+    lines.forEach((line) => {
+        if (line.id1 == pt.pointId)
+            connectedPoints.push(getPointById(line.id2));
+        if (line.id2 == pt.pointId)
+            connectedPoints.push(getPointById(line.id1));
+    });
+    return connectedPoints;
+}

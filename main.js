@@ -95,6 +95,8 @@ function update() {
         boxSelectMode();
     if (keys.z in keysUp)
         selectNoneAll();
+    if (keys.v in keysUp)
+        copySelected();
     
     
     if (keys.q in keysDown) {
@@ -194,7 +196,7 @@ function update() {
                     selectedPointsCopy.forEach((existing) => {
                         if (existing.pointId == pickedObject.parent.pointId)
                             selected = true;
-                        if (!(keys.shift in keysDown))
+                        if (!(keys.shift in keysDown) && pickedMoveAxis == AXIS.none)
                             deselectPoint(existing);
                     });
                     if (pickedMoveAxis == AXIS.none) {

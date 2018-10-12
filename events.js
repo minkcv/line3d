@@ -10,7 +10,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 // for when w is released.
 var keysDown = [];
 var keysUp = []; // Cleared every update.
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67, x: 88, b:66}
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, f: 70, space: 32, q: 81, z: 90, e: 69, r: 82, t: 84, c: 67, x: 88, b:66, v: 86}
 addEventListener("keydown", function(e) {
     keysDown[e.keyCode] = true;
     delete keysUp[e.keyCode];
@@ -183,6 +183,31 @@ function selectNoneAll() {
                 selectPoint(child);
         });
     }
+}
+
+function copySelected() {
+    var selectedCopy = selectedPoints.slice();
+    selectedCopy.forEach((selected) => {
+        deselectPoint(selected);
+    });
+    var newPoints = [];
+    var idMap = {};
+    selectedCopy.forEach((pt) => {
+        var pos = new THREE.Vector3(pt.position.x, pt.position.y, pt.position.z);
+        var newPt = addPointXYZ({position: pos});
+        newPoints.push(newPt);
+        idMap[newPt.pointId] = pt.pointId;
+        idMap[pt.pointId] = newPt.pointId;
+    });
+    newPoints.forEach((newPt) => {
+        var connected = getConnectedPoints(getPointById(idMap[newPt.pointId]));
+        connected.forEach((connect) => {
+            var connectId = idMap[connect.pointId];
+            var newConnPt = getPointById(connectId);
+            createLine(newPt, newConnPt);
+        });
+        selectPoint(newPt);
+    });
 }
 
 function mirrorXY() {
