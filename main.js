@@ -191,9 +191,12 @@ function update() {
                 else if (clickMode == MODE.select && mouseWasDown) {
                     mouseWasDown = false;
                     var selected = false;
-                    selectedPoints.forEach((existing) => {
+                    var selectedPointsCopy = selectedPoints.slice();
+                    selectedPointsCopy.forEach((existing) => {
                         if (existing.pointId == pickedObject.parent.pointId)
                             selected = true;
+                        if (!(keys.shift in keysDown))
+                            deselectPoint(existing);
                     });
                     if (pickedMoveAxis == AXIS.none) {
                         if (selected)
