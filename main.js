@@ -153,13 +153,14 @@ function update() {
                 var ty = boxStartY - (threediv.clientHeight / 2);
                 mouseDX = tx + (width / 2) * sign(mouseX - boxStartX);
                 mouseDY = ty + (height / 2) * sign(mouseY - boxStartY);
-                var boxTranslate = getScreenTranslation();
+                var boxTranslate = getScreenTranslation(false);
                 box.position.copy(boxTranslate);
                 box.position.add(cam.position);
                 box.rotation.y = cam.rotation.y;
                 box.rotateX(camera.rotation.x);
                 box.geometry.computeBoundingBox();
                 box.updateMatrixWorld(true);
+                //scene.add(box); // Very useful for debugging.
                 var boxMatrixInverse = new THREE.Matrix4().getInverse(box.matrixWorld);
                 var inverseBox = box.clone();
                 inverseBox.applyMatrix(boxMatrixInverse);
@@ -310,7 +311,7 @@ function deselectPoint(point) {
 
 var snapDistance = 0;
 var snapTranslate = new THREE.Vector3();
-function getScreenTranslation() {
+function getScreenTranslation(doSnap) {
     // Translate 2D screen movement into the appropriate 3D movement.
     // Holy crap this was difficult to figure out.
     var dir = new THREE.Vector3();
@@ -324,7 +325,7 @@ function getScreenTranslation() {
         viewUp.y * -mouseDY,
         viewUp.z * -mouseDY + viewRight.z * -mouseDX);
     translate.multiplyScalar(1 / realCamera.zoom);
-    if (snapDistance <= 0) // No snapping
+    if (snapDistance <= 0 || doSnap !== undefined) // No snapping
         return translate;
     var snapped = new THREE.Vector3();
     snapTranslate.add(translate);
