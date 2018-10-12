@@ -7,6 +7,10 @@
     <script src="events.js"></script>
 </head>
 <body>
+    <div id='selection-box' 
+        onmousemove='threeMove(event)'
+        onmouseup='threeUp(event)'>
+    </div>
     <div id='left'>
         <h3>Line 3D</h3>
         <p>Current Mode: <span id='currentMode'></span></p>
@@ -62,8 +66,7 @@
         onmousedown='threeDown(event)'
         onmouseup='threeUp(event)'
         onmousemove='threeMove(event)'
-        onwheel='threeWheel(event)'
-        onmouseout='threeOut(event)'>
+        onwheel='threeWheel(event)'>
         </div>
     </div>
     

@@ -77,10 +77,6 @@ function threeWheel(event) {
     mouseDZ = event.deltaY;
 }
 
-function threeOut(event) {
-    mouseDown = false;
-}
-
 // Handle options in side pane
 function toggleGrid(checkbox) {
     if (checkbox.checked) {

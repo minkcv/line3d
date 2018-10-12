@@ -39,3 +39,8 @@ a:visited, a:link{
 #currentMode {
     color: #ff0000;
 }
+#selection-box {
+    position: absolute;
+    border: 1px solid white;
+    display: none;
+}

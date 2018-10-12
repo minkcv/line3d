@@ -59,6 +59,7 @@ var autoDeselect = true;
 var boxStartX;
 var boxStartY;
 var boxStarted = false;
+var selectionBox = document.getElementById('selection-box');
 
 var rotateFactor = 100;
 var sprintFactor = 1;
@@ -124,6 +125,20 @@ function update() {
                 boxStartX = mouseX;
                 boxStartY = mouseY;
                 boxStarted = true;
+                selectionBox.style.left = boxStartX + 'px';
+                selectionBox.style.top = boxStartY + 'px';
+                selectionBox.style.display = 'block';
+            }
+            console.log(mouseDown);
+            if (boxStarted) {
+                var width = mouseX - boxStartX;
+                var height = mouseY - boxStartY;
+                selectionBox.style.width = Math.abs(width) + 'px';
+                selectionBox.style.height = Math.abs(height) + 'px';
+                if (width < 0)
+                    selectionBox.style.left = boxStartX + width + 'px';
+                if (height < 0)
+                    selectionBox.style.top = boxStartY + height + 'px';
             }
             if (boxStarted && !mouseDown) {
                 var width = Math.abs(mouseX - boxStartX);
@@ -146,7 +161,6 @@ function update() {
                 var inverseBox = box.clone();
                 inverseBox.applyMatrix(boxMatrixInverse);
                 var bb = new THREE.Box3().setFromObject(inverseBox);
-                //scene.add(box);
                 scene.children.forEach((child) => {
                     if (child.pointId) {
                         var inversePoint = child.position.clone();
@@ -155,8 +169,9 @@ function update() {
                         if (isInside)
                             selectPoint(child);
                     }
-                })
+                });
                 boxStarted = false;
+                selectionBox.style.display = 'none';
             }
         }
         else if (pickedObject != null) {
