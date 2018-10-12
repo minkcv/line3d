@@ -15,7 +15,8 @@ var scene = new THREE.Scene();
 scene.background = new THREE.Color('#000000');
 
 var scale = 2;
-var realCamera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);
+var renderDistance = 4000;
+var realCamera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, renderDistance);
 
 var gridHelper = new THREE.GridHelper(1000, 10, 0x555555, 0x555555);
 scene.add(gridHelper);
@@ -144,8 +145,7 @@ function update() {
             if (boxStarted && !mouseDown) {
                 var width = Math.abs(mouseX - boxStartX);
                 var height = Math.abs(mouseY - boxStartY);
-                var depth = 4000;
-                var geom = new THREE.BoxGeometry(width / realCamera.zoom, height / realCamera.zoom, depth);
+                var geom = new THREE.BoxGeometry(width / realCamera.zoom, height / realCamera.zoom, renderDistance);
                 var box = new THREE.Mesh(geom, blueMat);
                 var tx = (boxStartX - threediv.offsetLeft) - (threediv.clientWidth / 2);
                 var ty = boxStartY - (threediv.clientHeight / 2);
