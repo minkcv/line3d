@@ -133,6 +133,8 @@ function update() {
             if (boxStarted) {
                 var width = mouseX - boxStartX;
                 var height = mouseY - boxStartY;
+                selectionBox.style.left = boxStartX + 'px';
+                selectionBox.style.top = boxStartY + 'px';
                 selectionBox.style.width = Math.abs(width) + 'px';
                 selectionBox.style.height = Math.abs(height) + 'px';
                 if (width < 0)
