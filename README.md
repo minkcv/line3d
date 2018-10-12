@@ -10,6 +10,7 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Custom Grid Snapping
 - Mirror about XY plane
 - Select multiple points
+- Box selection
 
 ### TODO
 - Export to Wavefront obj
