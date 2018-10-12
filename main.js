@@ -15,7 +15,7 @@ var scene = new THREE.Scene();
 scene.background = new THREE.Color('#000000');
 
 var scale = 2;
-var renderDistance = 4000;
+var renderDistance = 16000;
 var realCamera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, renderDistance);
 
 var gridHelper = new THREE.GridHelper(1000, 10, 0x555555, 0x555555);
@@ -24,7 +24,7 @@ scene.add(gridHelper);
 var cam = new THREE.Object3D(); // Parent for camera
 var camera = new THREE.Object3D(); // Parent for realCamera
 camera.add(realCamera);
-realCamera.translateZ(2000);
+realCamera.translateZ(renderDistance / 2);
 cam.add(camera);
 scene.add(cam);
 

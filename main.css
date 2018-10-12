@@ -41,3 +41,6 @@ a:visited, a:link{
     border: 1px solid white;
     display: none;
 }
+#gridSnapDistance {
+    width: 50px;
+}
