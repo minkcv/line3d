@@ -140,9 +140,12 @@ function toggleAutoDeselect(checkbox) {
 }
 
 function changeGridSnapDistance(textbox) {
+    // Digits only. The type="number" allows things like 'e' so do it by hand.
+    textbox.value = textbox.value.replace(/[^\d]/,'');
     snapDistance = parseInt(textbox.value);
     if (isNaN(snapDistance))
         snapDistance = 0;
+    textbox.value = snapDistance;
 }
 
 function selectMode() {
