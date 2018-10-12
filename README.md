@@ -11,6 +11,7 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Mirror about XY plane
 - Select multiple points
 - Box selection
+- Selection Copying
 
 ### TODO
 - Export to Wavefront obj

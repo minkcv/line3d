@@ -101,6 +101,8 @@ function movePoint(pt, translation, axis) {
 }
 
 function getPointById(id) {
+    if (id === undefined)
+        return null;
     var found = null;
     scene.children.forEach((child) => {
         if (child.pointId == id)

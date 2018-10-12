@@ -207,7 +207,8 @@ function copySelected() {
         connected.forEach((connect) => {
             var connectId = idMap[connect.pointId];
             var newConnPt = getPointById(connectId);
-            createLine(newPt, newConnPt);
+            if (newConnPt != null)
+                createLine(newPt, newConnPt);
         });
         selectPoint(newPt);
     });
