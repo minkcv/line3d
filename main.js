@@ -97,6 +97,8 @@ function update() {
         selectNoneAll();
     if (keys.v in keysUp)
         copySelected();
+    if (keys.g in keysUp)
+        extrudeSelected();
     
     
     if (keys.q in keysDown) {
