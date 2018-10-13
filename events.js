@@ -139,6 +139,23 @@ function toggleAutoDeselect(checkbox) {
     autoDeselect = checkbox.checked;
 }
 
+function toggleLightTheme(checkbox) {
+    if (checkbox.checked) {
+        currentLineMat = blackLineMat;
+        lines.forEach((line) => {
+            line.obj.material = blackLineMat;
+        })
+        scene.background = new THREE.Color( 0xffffff );
+    }
+    else {
+        currentLineMat = whiteLineMat;
+        lines.forEach((line) => {
+            line.obj.material = whiteLineMat;
+        })
+        scene.background = new THREE.Color( 0x000000 );
+    }
+}
+
 function changeGridSnapDistance(textbox) {
     // Digits only. The type="number" allows things like 'e' so do it by hand.
     textbox.value = textbox.value.replace(/[^\d]/,'');

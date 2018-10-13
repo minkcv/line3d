@@ -1,5 +1,7 @@
 // THREE.js materials
 var whiteLineMat = new THREE.LineBasicMaterial({color: 0xffffff});
+var blackLineMat = new THREE.LineBasicMaterial({color: 0x000000});
+var currentLineMat = whiteLineMat;
 var redLineMat = new THREE.LineBasicMaterial({color: 0xff0000});
 var greenLineMat = new THREE.LineBasicMaterial({color: 0x00ff00});
 var blueLineMat = new THREE.LineBasicMaterial({color: 0x0000ff});
