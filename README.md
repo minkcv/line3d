@@ -1,4 +1,5 @@
-# Line 3D
+![logo](./logo.png)
+
 Draw wireframe meshes in the browser. Requires WebGL
 
 [minkcv.github.io/line3d/](https://minkcv.github.io/line3d/)
@@ -12,6 +13,7 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Select multiple points
 - Box selection
 - Selection Copying
+- Selection extruding
 
 ### TODO
 - Export to Wavefront obj
