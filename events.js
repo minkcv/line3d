@@ -299,6 +299,18 @@ function mirrorXY() {
     });
 }
 
+function deleteSelected() {
+    var selectedCopy = selectedPoints.slice();
+    selectedCopy.forEach((selected) => {
+        deselectPoint(selected);
+        scene.remove(selected);
+        var linesToPoint = getLinesWithPoint(selected);
+        linesToPoint.forEach((line) => {
+            deleteLine2(line);
+        });
+    });
+}
+
 function saveJSON() {
     var textbox = document.getElementById('loadsave');
     var points = [];
