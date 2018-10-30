@@ -260,23 +260,41 @@ function copySelected() {
 }
 
 function mirrorXY() {
+    mirrorSelection(1, 1, -1);
+}
+function mirrorXZ() {
+    mirrorSelection(1, -1, 1);
+}
+function mirrorYZ() {
+    mirrorSelection(-1, 1, 1);
+}
+
+function mirrorSelection(x, y, z) {
     var points = [];
     lines.forEach((line) => {
         var pt1exists = false;
         var pt2exists = false;
+        var pt1selected = false;
+        var pt2selected = false;
         points.forEach((p) => {
             if (p.oldId == line.id1)
                 pt1exists = true;
             if (p.oldId == line.id2)
                 pt2exists = true;
         });
-        if (!pt1exists) {
-            var newPos1 = new THREE.Vector3(line.pos1.x, line.pos1.y, -line.pos1.z);
+        selectedPoints.forEach((p) => {
+            if (p.pointId == line.id1)
+                pt1selected = true;
+            if (p.pointId == line.id2)
+                pt2selected = true;
+        });
+        if (!pt1exists && pt1selected) {
+            var newPos1 = new THREE.Vector3(line.pos1.x * x, line.pos1.y * y, line.pos1.z * z);
             var pt1 = addPointXYZ({position: newPos1});
             points.push({pointId: pt1.pointId, oldId: line.id1, position: pt1.position});
         }
-        if (!pt2exists) {
-            var newPos2 = new THREE.Vector3(line.pos2.x, line.pos2.y, -line.pos2.z);
+        if (!pt2exists && pt2selected) {
+            var newPos2 = new THREE.Vector3(line.pos2.x * x, line.pos2.y * y, line.pos2.z * z);
             var pt2 = addPointXYZ({position: newPos2});
             points.push({pointId: pt2.pointId, oldId: line.id2, position: pt2.position});
         }
@@ -296,6 +314,18 @@ function mirrorXY() {
             createLine({position: newPt1.position, pointId: newPt1.pointId}, 
                 {position: newPt2.position, pointId: newPt2.pointId});
         }
+    });
+}
+
+function scaleSelected() {
+    var scale = parseFloat(document.getElementById('scale').value);
+    if (isNaN(scale))
+        return;
+    selectedPoints.forEach((point) => {
+        var newPos = new THREE.Vector3();
+        newPos.copy(point.position);
+        newPos.multiplyScalar(scale);
+        movePoint2(point, newPos);
     });
 }
 

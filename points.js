@@ -74,6 +74,7 @@ function addPointXYZ(pt) {
 }
 
 // pt has "pointId" and "position"
+// only moves lines, move the point after calling this
 function movePoint(pt, translation, axis) {
     var foundObjects = [];
     lines.forEach((line) => {
@@ -98,6 +99,26 @@ function movePoint(pt, translation, axis) {
         foundObj.obj.geometry.vertices[foundObj.index] = newPoint;
         foundObj.obj.geometry.verticesNeedUpdate = true;
     });
+}
+
+// Moves point and lines
+function movePoint2(pt, newPos) {
+    var foundObjects = [];
+    lines.forEach((line) => {
+        if (line.id1 == pt.pointId) {
+            foundObjects.push({obj: line.obj, index: 0, point: pt.position});
+            line.pos1 = pt.position;
+        }
+        else if (line.id2 == pt.pointId) {
+            foundObjects.push({obj: line.obj, index: 1, point: pt.position});
+            line.pos2 = pt.position;
+        }
+    });
+    foundObjects.forEach((foundObj) => {
+        foundObj.obj.geometry.vertices[foundObj.index] = newPos;
+        foundObj.obj.geometry.verticesNeedUpdate = true;
+    });
+    pt.position.copy(newPos);
 }
 
 function getPointById(id) {

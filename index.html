@@ -28,7 +28,9 @@
             <li>A: <button onclick='addPoint()'>Add Point</button></li>
             <li>Z: <button onclick='selectNoneAll()'>Select None/All</button></li>
             <br>
-            <p>Change Mode:</p>
+        </ul>
+        <p>Change Mode:</p>
+        <ul>
             <li>S: <button onclick='selectMode()'>Select Points</button></li>
             <li>C: <button onclick='connectMode()'>Connect Selected</button></li>
             <li>D: <button onclick='disconnectMode()'>Disconnect Selected</button></li>
@@ -56,8 +58,15 @@
             <label for='toggleLightTheme'>Use Light Theme</label><br>
             <label for='gridSnapDistance'>Grid Snap Distance</label>
             <input type='text' id='gridSnapDistance' value='0'onkeyup='changeGridSnapDistance(this)'><br><br>
-            <button onclick='mirrorXY()'>Mirror About XY Plane</button>
-            <button onclick='deleteSelected()'>Delete Selected Points</button>
+        </div>
+            <p>Modify Selection:</p>
+            <ul>
+                <li><button onclick='mirrorXY()'>Mirror About XY Plane</button></li>
+                <li><button onclick='mirrorXZ()'>Mirror About XZ Plane</button></li>
+                <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
+                <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
+                <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
+            </ul>
             <p>
                 Loading/Saving <br>
                 <button onclick='saveJSON()'>Save to JSON</button> <br>
@@ -65,7 +74,6 @@
                 <button onclick='loadJSON()'>Load from JSON</button> <br>
             </p>
             <a href="http://minkcv.com" id='author'>minkcv.com</a>
-        </div>
     </div>
     <div id='right'>
         <div id='three' 
