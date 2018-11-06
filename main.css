@@ -41,6 +41,6 @@ a:visited, a:link{
     border: 1px solid white;
     display: none;
 }
-#gridSnapDistance {
+#gridSnapDistance, #scale, #angledelta, #sphereradius, #hsegments, #vsegments, #cylinderradius #cylinderheight {
     width: 50px;
 }

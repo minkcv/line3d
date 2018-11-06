@@ -341,6 +341,90 @@ function deleteSelected() {
     });
 }
 
+function addSphere() {
+    var radius = parseFloat(document.getElementById('sphereradius').value);
+    if (isNaN(radius))
+        return;
+    angleDelta = parseFloat(document.getElementById('angledelta').value);
+    if (isNaN(angleDelta))
+        return;
+    var c=3.141592654/180.0;
+    var x1,y1,z1,phi0,angleDelta;
+    phi0=60;
+    var rings = [];
+    for (var phi=-phi0; phi<=phi0; phi+=angleDelta) {
+        var phir=c*phi; //Phi in radians
+        var ring = [];
+        for (var theta=0; theta<=360; theta+=angleDelta) {
+            var thetar=c*theta;
+            x1 = radius * Math.sin(thetar) * Math.cos(phir);
+            y1 = radius * Math.sin(phir);
+            z1 = radius * Math.cos(thetar) * Math.cos(phir);
+            var pt = addPointXYZ({position: {x: x1, y: y1, z: z1}});
+            ring.push(pt);
+        }
+        for (var index = 1; index < ring.length; index++) {
+            createLine(ring[index - 1], ring[index]);
+        }
+        createLine(ring[index - 1], ring[0]);
+        rings.push(ring);
+    }
+    for (let index = 1; index < rings.length; index++) {
+        const ring = rings[index - 1];
+        const ring2 = rings[index];
+        for (var i2 = 0; i2 < ring.length; i2++) {
+            createLine(ring[i2], ring2[i2]);
+        }
+    }
+    var top = addPointXYZ({position: {x: 0, y: radius, z: 0}});
+    var bottom = addPointXYZ({position: {x: 0, y: -radius, z: 0}});
+    for (let index = 0; index < rings[0].length; index ++)
+    {
+        createLine(top, rings[rings.length - 1][index]);
+        createLine(bottom, rings[0][index]);
+    }
+}
+
+function addCylinder() {
+    var radius = parseFloat(document.getElementById('cylinderradius').value);
+    if (isNaN(radius))
+        return;
+    var hSegments = parseInt(document.getElementById('hsegments').value);
+    if (isNaN(hSegments))
+        return;
+    var vSegments = parseInt(document.getElementById('vsegments').value);
+    if (isNaN(vSegments))
+        return;
+    var height = parseFloat(document.getElementById('cylinderheight').value);
+    var vRadiansPerSeg = 2 * Math.PI / vSegments;
+    var rings = [];
+    for (let hSeg = -hSegments / 2; hSeg <= hSegments / 2; hSeg++) {
+        var y = hSeg / hSegments;
+        y *= height;
+        var ring = [];
+        for (let vSeg = 0; vSeg < vSegments; vSeg++) {
+            var x = Math.cos(vSeg * vRadiansPerSeg);
+            var z = Math.sin(vSeg * vRadiansPerSeg);
+            x *= radius;
+            z *= radius;
+            var pt = addPointXYZ({position: {x: x, y: y, z: z}});
+            ring.push(pt);
+        }
+        for (var index = 1; index < ring.length; index++) {
+            createLine(ring[index - 1], ring[index]);
+        }
+        createLine(ring[index - 1], ring[0]);
+        rings.push(ring);
+    }
+    for (let index = 1; index < rings.length; index++) {
+        const ring = rings[index - 1];
+        const ring2 = rings[index];
+        for (var i2 = 0; i2 < ring.length; i2++) {
+            createLine(ring[i2], ring2[i2]);
+        }
+    }
+}
+
 function saveJSON() {
     var textbox = document.getElementById('loadsave');
     var points = [];

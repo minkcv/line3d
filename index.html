@@ -23,7 +23,7 @@
             <li>E: Right Side View</li>
             <li>R: Isometric View</li>
             <li>T: Recenter Camera</li>
-            <li>SHIFT: Multi select</li>
+            <li>SHIFT: Multi Select</li>
             <br>
             <li>A: <button onclick='addPoint()'>Add Point</button></li>
             <li>Z: <button onclick='selectNoneAll()'>Select None/All</button></li>
@@ -66,6 +66,19 @@
                 <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
                 <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
                 <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
+            </ul>
+            <p>Shapes</p>
+            <ul>
+                <li><button onclick='addSphere()'>Add Sphere</button><br>
+                    Angle Delta: <input type='number' id='angledelta', value='20'><br>
+                    Radius: <input type='number' id='sphereradius', value='100'>
+                </li>
+                <li><button onclick='addCylinder()'>Add Cylinder</button><br>
+                    Radius: <input type='number' id='cylinderradius', value='100'><br>
+                    Height: <input type='number' id='cylinderheight', value='100'><br>
+                    Y Segments: <input type='number' id='hsegments', value='5'><br>
+                    XZ Segments: <input type='number' id='vsegments', value='10'>
+                </li>
             </ul>
             <p>
                 Loading/Saving <br>
