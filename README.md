@@ -17,7 +17,6 @@ Draw wireframe meshes in the browser. Requires WebGL
 
 ### TODO
 - Export to Wavefront obj
-- Better UI/UX
 
 ### Screenshots
 ![screenshot](./screenshot.PNG)

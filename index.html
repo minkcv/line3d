@@ -13,8 +13,9 @@
     </div>
     <div id='left'>
         <h3>Line 3D</h3>
-        <p>Current Mode: <span id='currentMode'></span></p>
-        <ul>
+        <p>Current Mode: <span id='currentMode'></span><br></p>
+        <button class='accordion'>Controls</button>
+        <ul class='panel'>
             <li>Left Mouse: Mode Action</li>
             <li>Middle Mouse: Pan View</li>
             <li>Right Rotate View</li><br>
@@ -29,8 +30,9 @@
             <li>Z: <button onclick='selectNoneAll()'>Select None/All</button></li>
             <br>
         </ul>
-        <p>Change Mode:</p>
-        <ul>
+        <br>
+        <button class='accordion'>Change Mode</button>
+        <ul class='panel'>
             <li>S: <button onclick='selectMode()'>Select Points</button></li>
             <li>C: <button onclick='connectMode()'>Connect Selected</button></li>
             <li>D: <button onclick='disconnectMode()'>Disconnect Selected</button></li>
@@ -39,7 +41,9 @@
             <li>V: <button onclick='copySelected()'>Copy Selected</button></li>
             <li>G: <button onclick='extrudeSelected()'>Extrude Selected</button></li>
         </ul>
-        <div id='controls'>
+        <br>
+        <button class='accordion'>Options</button>
+        <div class='panel' style='margin-left: 0px'>
             <input type="checkbox" id="toggleGrid" onchange='toggleGrid(this)' checked>
             <label for="toggleGrid">Show Grid</label><br>
             <input type="checkbox" id='toggleAxes' onchange='toggleAxes(this)' checked>
@@ -59,34 +63,37 @@
             <label for='gridSnapDistance'>Grid Snap Distance</label>
             <input type='text' id='gridSnapDistance' value='0'onkeyup='changeGridSnapDistance(this)'><br><br>
         </div>
-            <p>Modify Selection:</p>
-            <ul>
-                <li><button onclick='mirrorXY()'>Mirror About XY Plane</button></li>
-                <li><button onclick='mirrorXZ()'>Mirror About XZ Plane</button></li>
-                <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
-                <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
-                <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
-            </ul>
-            <p>Shapes</p>
-            <ul>
-                <li><button onclick='addSphere()'>Add Sphere</button><br>
-                    Angle Delta: <input type='number' id='angledelta', value='20'><br>
-                    Radius: <input type='number' id='sphereradius', value='100'>
-                </li>
-                <li><button onclick='addCylinder()'>Add Cylinder</button><br>
-                    Radius: <input type='number' id='cylinderradius', value='100'><br>
-                    Height: <input type='number' id='cylinderheight', value='100'><br>
-                    Y Segments: <input type='number' id='hsegments', value='5'><br>
-                    XZ Segments: <input type='number' id='vsegments', value='10'>
-                </li>
-            </ul>
-            <p>
-                Loading/Saving <br>
-                <button onclick='saveJSON()'>Save to JSON</button> <br>
-                <input type="text" id='loadsave'> <br>
-                <button onclick='loadJSON()'>Load from JSON</button> <br>
-            </p>
-            <a href="http://minkcv.com" id='author'>minkcv.com</a>
+        <br>
+        <button class='accordion'>Modify Selection</button>
+        <ul class='panel'>
+            <li><button onclick='mirrorXY()'>Mirror About XY Plane</button></li>
+            <li><button onclick='mirrorXZ()'>Mirror About XZ Plane</button></li>
+            <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
+            <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
+            <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
+        </ul>
+        <br>
+        <button class='accordion'>Shapes</button>
+        <ul class='panel'>
+            <li><button onclick='addSphere()'>Add Sphere</button><br>
+                Angle Delta: <input type='number' id='angledelta', value='20'><br>
+                Radius: <input type='number' id='sphereradius', value='100'>
+            </li>
+            <li><button onclick='addCylinder()'>Add Cylinder</button><br>
+                Radius: <input type='number' id='cylinderradius', value='100'><br>
+                Height: <input type='number' id='cylinderheight', value='100'><br>
+                Y Segments: <input type='number' id='hsegments', value='5'><br>
+                XZ Segments: <input type='number' id='vsegments', value='10'>
+            </li>
+        </ul>
+        <br>
+        <button class='accordion'>Loading/Saving</button>
+        <div class='panel'>
+            <button onclick='saveJSON()'>Save to JSON</button> <br>
+            <input type="text" id='loadsave'> <br>
+            <button onclick='loadJSON()'>Load from JSON</button> <br>
+        </div>
+        <a href="http://minkcv.com" id='author'>minkcv.com</a>
     </div>
     <div id='right'>
         <div id='three' 
@@ -96,7 +103,29 @@
         onwheel='threeWheel(event)'>
         </div>
     </div>
-    
+    <script>
+        // This is from w3s. It makes the accordions expand and contract.
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                /* Toggle between adding and removing the "active" class,
+                to highlight the button that controls the panel */
+                this.classList.toggle("active");
+
+                /* Toggle between hiding and showing the active panel */
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+        // Show controls by default
+        acc[0].nextElementSibling.style.display = 'block';
+    </script>
     <script src="main.js"></script>
     <script src="points.js"></script>
     <script src="line.js"></script>
