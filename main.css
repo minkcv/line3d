@@ -17,13 +17,12 @@ h3, .panel, p{
 #left {
     background-color: #2c2c2c;
     float: left;
-    width: 25%;
+    width: 400px;
     height: 100%;
     overflow: auto;
 }
 #right {
-    float: right;
-    width: 75%;
+    margin-left: 400px;
     height: 100%;
 }
 #three {
