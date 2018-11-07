@@ -9,10 +9,9 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Rotate, zoom, and pan an orthographic camera
 - Saving/loading meshes
 - Custom grid snapping
-- Mirror about XY plane
 - Select multiple points
 - Box selection
-- Selection copying, extruding, mirroring, and scaling
+- Selection copying, extruding, mirroring, rotating and scaling
 - Dark and light themes
 
 ### TODO
