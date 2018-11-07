@@ -22,9 +22,6 @@ addEventListener("keyup", function(e) {
 }, false);
 
 addEventListener("resize", function(e) {
-    var left = this.document.getElementById('left');
-    var threeWidth = window.innerWidth - left.clientWidth;
-    //threediv.style.width = threeWidth + 'px';
     width = threediv.clientWidth;
     height = threediv.clientHeight;
     renderer.setSize(width, height);
