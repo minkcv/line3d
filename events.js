@@ -355,24 +355,39 @@ function rotateAxis(axis) {
     var degrees = parseFloat(document.getElementById('rotatedegrees').value);
     if (isNaN(degrees))
         return;
-    var center = new THREE.Object3D();
-    for (var i = 0; i < selectedPoints.length; i++)
-        center.add(selectedPoints[i]);
+    var rotateCenter = document.getElementById('rotatecenter').checked;
+    var orbit = new THREE.Object3D();
+    var center = new THREE.Vector3();
+    
+    if (rotateCenter) {
+        for (var i = 0; i < selectedPoints.length; i++)
+            center.add(selectedPoints[i].position);
+        var n = selectedPoints.length;
+        center.multiplyScalar(1 / n);
+    }
+    for (var i = 0; i < selectedPoints.length; i++) {
+        orbit.add(selectedPoints[i]);
+        selectedPoints[i].position.sub(center);
+    }
+    
     if (axis == 'x')
-        center.rotateX(degrees * Math.PI / 180);
+        orbit.rotateX(degrees * Math.PI / 180);
     if (axis == 'y')
-        center.rotateY(degrees * Math.PI / 180);
+        orbit.rotateY(degrees * Math.PI / 180);
     if (axis == 'z')
-        center.rotateZ(degrees * Math.PI / 180);
+        orbit.rotateZ(degrees * Math.PI / 180);
+
+    orbit.updateMatrixWorld();
     var positions = [];
-    center.updateMatrixWorld();
-    center.children.forEach((pt) => {
+    orbit.children.forEach((pt) => {
         var pos = new THREE.Vector3();
         pos.setFromMatrixPosition(pt.matrixWorld);
+        if (rotateCenter)
+            pos.add(center);
         positions.push(pos);
     });
-    while (center.children.length > 0)
-        scene.add(center.children[0]);
+    while (orbit.children.length > 0)
+        scene.add(orbit.children[0]);
     for (var i = 0; i < selectedPoints.length; i++) {
         movePoint2(selectedPoints[i], positions[i]);
     }
