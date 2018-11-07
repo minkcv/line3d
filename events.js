@@ -341,6 +341,43 @@ function deleteSelected() {
     });
 }
 
+function rotateX() {
+    rotateAxis('x');
+}
+function rotateY() {
+    rotateAxis('y');
+}
+function rotateZ() {
+    rotateAxis('z');
+}
+
+function rotateAxis(axis) {
+    var degrees = parseFloat(document.getElementById('rotatedegrees').value);
+    if (isNaN(degrees))
+        return;
+    var center = new THREE.Object3D();
+    for (var i = 0; i < selectedPoints.length; i++)
+        center.add(selectedPoints[i]);
+    if (axis == 'x')
+        center.rotateX(degrees * Math.PI / 180);
+    if (axis == 'y')
+        center.rotateY(degrees * Math.PI / 180);
+    if (axis == 'z')
+        center.rotateZ(degrees * Math.PI / 180);
+    var positions = [];
+    center.updateMatrixWorld();
+    center.children.forEach((pt) => {
+        var pos = new THREE.Vector3();
+        pos.setFromMatrixPosition(pt.matrixWorld);
+        positions.push(pos);
+    });
+    while (center.children.length > 0)
+        scene.add(center.children[0]);
+    for (var i = 0; i < selectedPoints.length; i++) {
+        movePoint2(selectedPoints[i], positions[i]);
+    }
+}
+
 function addSphere() {
     var radius = parseFloat(document.getElementById('sphereradius').value);
     if (isNaN(radius))

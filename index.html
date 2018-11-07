@@ -73,6 +73,14 @@
             <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
         </ul>
         <br>
+        <button class='accordion'>Rotate Selection</button>
+        <div class='panel'>
+            Degrees <input type='number' id='rotatedegrees' value='90'><br>
+            AXis
+            <button onclick='rotateX()'>X</button>
+            <button onclick='rotateY()'>Y</button>
+            <button onclick='rotateZ()'>Z</button>
+        </div>
         <button class='accordion'>Shapes</button>
         <ul class='panel'>
             <li><button onclick='addSphere()'>Add Sphere</button><br>
