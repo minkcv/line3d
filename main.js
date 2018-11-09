@@ -180,6 +180,7 @@ function update() {
                 });
                 boxStarted = false;
                 selectionBox.style.display = 'none';
+                selectMode();
             }
         }
         else if (pickedObject != null) {
