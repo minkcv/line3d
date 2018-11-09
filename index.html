@@ -38,8 +38,6 @@
             <li>D: <button onclick='disconnectMode()'>Disconnect Selected</button></li>
             <li>X: <button onclick='deleteMode()'>Delete Points</button></li>
             <li>B: <button onclick='boxSelectMode()'>Box Select</button></li>
-            <li>V: <button onclick='copySelected()'>Copy Selected</button></li>
-            <li>G: <button onclick='extrudeSelected()'>Extrude Selected</button></li>
         </ul>
         <br>
         <button class='accordion'>Options</button>
@@ -71,6 +69,8 @@
             <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
             <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
             <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
+            <li>V: <button onclick='copySelected()'>Copy Selected</button></li>
+            <li>G: <button onclick='extrudeSelected()'>Extrude Selected</button></li>
         </ul>
         <br>
         <button class='accordion'>Rotate Selection</button>
@@ -98,6 +98,8 @@
         <br>
         <button class='accordion'>Loading/Saving</button>
         <div class='panel'>
+            <input type='checkbox' id='compresssave' checked>
+            <label for='compresssave'>Round to 2 decimals</label><br>
             <button onclick='saveJSON()'>Save to JSON</button> <br>
             <input type="text" id='loadsave'> <br>
             <button onclick='loadJSON()'>Load from JSON</button> <br>
@@ -132,9 +134,6 @@
                 }
             });
         }
-        // Show controls by default
-        acc[0].nextElementSibling.style.display = 'block';
-        acc[0].classList.toggle('active');
     </script>
     <script src="main.js"></script>
     <script src="points.js"></script>

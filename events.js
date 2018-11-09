@@ -479,10 +479,21 @@ function addCylinder() {
 
 function saveJSON() {
     var textbox = document.getElementById('loadsave');
+    var compress = document.getElementById('compresssave').checked;
     var points = [];
     lines.forEach((line) => {
-        var pt1 = {id: line.id1, pos: line.pos1, conn: []};
-        var pt2 = {id: line.id2, pos: line.pos2, conn: []};
+        var pos1 = line.pos1;
+        var pos2 = line.pos2;
+        if (compress) {
+            pos1.x = Math.round(pos1.x * 100) / 100;
+            pos1.y = Math.round(pos1.y * 100) / 100;
+            pos1.z = Math.round(pos1.z * 100) / 100;
+            pos2.x = Math.round(pos2.x * 100) / 100;
+            pos2.y = Math.round(pos2.y * 100) / 100;
+            pos2.z = Math.round(pos2.z * 100) / 100;
+        }
+        var pt1 = {id: line.id1, pos: pos1, conn: []};
+        var pt2 = {id: line.id2, pos: pos2, conn: []};
         var pt1exists = false;
         var pt2exists = false;
         points.forEach((existing) => {
