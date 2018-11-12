@@ -68,7 +68,12 @@
             <li><button onclick='mirrorXZ()'>Mirror About XZ Plane</button></li>
             <li><button onclick='mirrorYZ()'>Mirror About YZ Plane</button></li>
             <li><button onclick='deleteSelected()'>Delete Selected Points</button></li>
-            <li><button onclick='scaleSelected()'>Scale Selected Points</button><input type='number' id='scale' value='1'></li>
+            <li><button onclick='scaleSelected()'>Scale Selected Points</button>by<input type='number' id='scale' value='1'><br>
+                On Axis
+                <input type='checkbox' id='scalex'><label for='scalex'>X</label>
+                <input type='checkbox' id='scaley'><label for='scaley'>Y</label>
+                <input type='checkbox' id='scalez'><label for='scalez'>Z</label>
+            </li>
             <li>V: <button onclick='copySelected()'>Copy Selected</button></li>
             <li>G: <button onclick='extrudeSelected()'>Extrude Selected</button></li>
         </ul>
@@ -77,7 +82,7 @@
         <div class='panel'>
             Degrees <input type='number' id='rotatedegrees' value='15'><br>
             <input type='checkbox' id='rotatecenter' checked><label for='rotatecenter'>About Selection Center</label><br>
-            AXis
+            Axis
             <button onclick='rotateX()'>X</button>
             <button onclick='rotateY()'>Y</button>
             <button onclick='rotateZ()'>Z</button>

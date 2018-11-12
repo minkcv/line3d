@@ -318,15 +318,43 @@ function mirrorSelection(x, y, z) {
 }
 
 function scaleSelected() {
-    var scale = parseFloat(document.getElementById('scale').value);
-    if (isNaN(scale))
+    var amount = parseFloat(document.getElementById('scale').value);
+    var scaleX = document.getElementById('scalex').checked;
+    var scaleY = document.getElementById('scaley').checked;
+    var scaleZ = document.getElementById('scalez').checked;
+    if (isNaN(amount))
         return;
-    selectedPoints.forEach((point) => {
-        var newPos = new THREE.Vector3();
-        newPos.copy(point.position);
-        newPos.multiplyScalar(scale);
-        movePoint2(point, newPos);
+    var orbit = new THREE.Object3D();
+    var center = new THREE.Vector3();
+    
+    for (var i = 0; i < selectedPoints.length; i++)
+        center.add(selectedPoints[i].position);
+    var n = selectedPoints.length;
+    center.multiplyScalar(1 / n);
+    for (var i = 0; i < selectedPoints.length; i++) {
+        orbit.add(selectedPoints[i]);
+        selectedPoints[i].position.sub(center);
+    }
+
+    orbit.updateMatrixWorld();
+    var positions = [];
+    orbit.children.forEach((pt) => {
+        var pos = new THREE.Vector3();
+        pos.setFromMatrixPosition(pt.matrixWorld);
+        pos.add(center);
+        if (scaleX)
+            pos.x *= amount;
+        if (scaleY)
+            pos.y *= amount;
+        if (scaleZ)
+            pos.z *= amount;
+        positions.push(pos);
     });
+    while (orbit.children.length > 0)
+        scene.add(orbit.children[0]);
+    for (var i = 0; i < selectedPoints.length; i++) {
+        movePoint2(selectedPoints[i], positions[i]);
+    }
 }
 
 function deleteSelected() {
