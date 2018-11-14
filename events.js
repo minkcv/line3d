@@ -333,15 +333,13 @@ function scaleSelected() {
     center.multiplyScalar(1 / n);
     for (var i = 0; i < selectedPoints.length; i++) {
         orbit.add(selectedPoints[i]);
-        selectedPoints[i].position.sub(center);
     }
 
-    orbit.updateMatrixWorld();
     var positions = [];
     orbit.children.forEach((pt) => {
         var pos = new THREE.Vector3();
         pos.setFromMatrixPosition(pt.matrixWorld);
-        pos.add(center);
+        pos.sub(center);
         if (scaleX)
             pos.x *= amount;
         if (scaleY)
@@ -353,7 +351,8 @@ function scaleSelected() {
     while (orbit.children.length > 0)
         scene.add(orbit.children[0]);
     for (var i = 0; i < selectedPoints.length; i++) {
-        movePoint2(selectedPoints[i], positions[i]);
+        var newPos = positions[i].add(center);
+        movePoint2(selectedPoints[i], newPos);
     }
 }
 
