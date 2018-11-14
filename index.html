@@ -18,7 +18,7 @@
         <ul class='panel'>
             <li>Left Mouse: Mode Action</li>
             <li>Middle Mouse: Pan View</li>
-            <li>Right Rotate View</li><br>
+            <li>Right Mouse: Rotate View</li><br>
             <li>Q: Front View</li>
             <li>W: Top View</li>
             <li>E: Right Side View</li>
@@ -94,10 +94,16 @@
                 Radius: <input type='number' id='sphereradius', value='100'>
             </li>
             <li><button onclick='addCylinder()'>Add Cylinder</button><br>
-                Radius: <input type='number' id='cylinderradius', value='100'><br>
-                Height: <input type='number' id='cylinderheight', value='100'><br>
-                Y Segments: <input type='number' id='hsegments', value='5'><br>
-                XZ Segments: <input type='number' id='vsegments', value='10'>
+                Radius: <input type='number' id='cylinderradius' value='100'><br>
+                Height: <input type='number' id='cylinderheight' value='100'><br>
+                Y Segments: <input type='number' id='hsegments' value='5'><br>
+                XZ Segments: <input type='number' id='vsegments' value='10'>
+            </li>
+            <li><button onclick='addGrid()'>Add Grid</button><br>
+                X Segments: <input type='number' id='gridxsegments' value='10'><br>
+                X Segment Size: <input type='number' id='gridxsegmentsize' value='100'><br>
+                Z Segments: <input type='number' id='gridzsegments' value='10'><br>
+                Z Segment Size: <input type='number' id='gridzsegmentsize' value='100'><br>
             </li>
         </ul>
         <br>

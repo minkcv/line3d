@@ -505,6 +505,48 @@ function addCylinder() {
     }
 }
 
+function addGrid() {
+    var xSegments = parseFloat(document.getElementById('gridxsegments').value);
+    if (isNaN(xSegments))
+        return;
+    var xSegmentSize = parseFloat(document.getElementById('gridxsegmentsize').value);
+    if (isNaN(xSegmentSize))
+        return;
+    var zSegments = parseFloat(document.getElementById('gridzsegments').value);
+    if (isNaN(zSegments))
+        return;
+    var zSegmentSize = parseFloat(document.getElementById('gridzsegmentsize').value);
+    if (isNaN(zSegmentSize))
+        return;
+    var points = [];
+    for (let x = 0; x < xSegments + 1; x++) {
+        var xp = x * xSegmentSize - ((xSegments / 2) * xSegmentSize);
+        var xPoints = [];
+        for (let z = 0; z < zSegments + 1; z++) {
+            var zp = z * zSegmentSize - ((zSegments / 2) * zSegmentSize);
+            var pt = addPointXYZ({position: {x: xp, y: 0, z: zp}});
+            xPoints.push(pt);
+        }
+        points.push(xPoints);
+    }
+
+    for (let x = 0; x  < points.length; x++) {
+        for (let z = 0; z < points[x].length; z++) {
+            var pt2 = null;
+            var pt3 = null;
+            var pt = points[x][z];
+            if (points[x + 1])
+                pt2 = points[x + 1][z];
+            if (points[x])
+                pt3 = points[x][z + 1];
+            if (pt2)
+                createLine(pt, pt2);
+            if (pt3)
+                createLine(pt, pt3);
+        }
+    }
+}
+
 function saveJSON() {
     var textbox = document.getElementById('loadsave');
     var compress = document.getElementById('compresssave').checked;
