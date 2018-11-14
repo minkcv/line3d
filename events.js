@@ -324,21 +324,16 @@ function scaleSelected() {
     var scaleZ = document.getElementById('scalez').checked;
     if (isNaN(amount))
         return;
-    var orbit = new THREE.Object3D();
     var center = new THREE.Vector3();
-    
     for (var i = 0; i < selectedPoints.length; i++)
         center.add(selectedPoints[i].position);
     var n = selectedPoints.length;
     center.multiplyScalar(1 / n);
-    for (var i = 0; i < selectedPoints.length; i++) {
-        orbit.add(selectedPoints[i]);
-    }
 
     var positions = [];
-    orbit.children.forEach((pt) => {
+    selectedPoints.forEach((pt) => {
         var pos = new THREE.Vector3();
-        pos.setFromMatrixPosition(pt.matrixWorld);
+        pos.copy(pt.position);
         pos.sub(center);
         if (scaleX)
             pos.x *= amount;
@@ -348,8 +343,6 @@ function scaleSelected() {
             pos.z *= amount;
         positions.push(pos);
     });
-    while (orbit.children.length > 0)
-        scene.add(orbit.children[0]);
     for (var i = 0; i < selectedPoints.length; i++) {
         var newPos = positions[i].add(center);
         movePoint2(selectedPoints[i], newPos);
