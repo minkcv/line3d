@@ -608,3 +608,70 @@ function loadJSON() {
         });
     });
 }
+
+function saveOBJ() {
+    var obj = '';
+    var points = [];
+    var objId = 1;
+    var pointIdToObjId = {};
+    var compress = document.getElementById('compresssave').checked;
+    lines.forEach((line) => {
+        var pos1 = line.pos1;
+        var pos2 = line.pos2;
+        if (compress) {
+            pos1.x = Math.round(pos1.x * 100) / 100;
+            pos1.y = Math.round(pos1.y * 100) / 100;
+            pos1.z = Math.round(pos1.z * 100) / 100;
+            pos2.x = Math.round(pos2.x * 100) / 100;
+            pos2.y = Math.round(pos2.y * 100) / 100;
+            pos2.z = Math.round(pos2.z * 100) / 100;
+        }
+        var pt1 = {id: line.id1, pos: pos1, conn: []};
+        var pt2 = {id: line.id2, pos: pos2, conn: []};
+        var pt1exists = false;
+        var pt2exists = false;
+        points.forEach((existing) => {
+            if (existing.id == pt1.id)
+                pt1exists = true;
+            if (existing.id == pt2.id)
+                pt2exists = true;
+        });
+        if (!pt1exists) {
+            pointIdToObjId[pt1.id] = objId;
+            objId++;
+            points.push(pt1);
+        }
+        if (!pt2exists) {
+            pointIdToObjId[pt2.id] = objId;
+            objId++;
+            points.push(pt2);
+        }
+    });
+    lines.forEach((line) => {
+        points.forEach((point) => {
+            if (line.id1 == point.id) {
+                if (point.conn.indexOf(line.id2) < 0)
+                    point.conn.push(line.id2);
+            }
+            if (line.id2 == point.id) {
+                if (point.conn.indexOf(line.id1) < 0)
+                    point.conn.push(line.id1);
+            }
+        })
+    });
+    points.forEach((point) => {
+        obj += 'v ' + point.pos.x + ' ' + point.pos.y + ' ' + point.pos.z + '\n';
+    });
+    lines.forEach((line) => {
+        var objId1 = pointIdToObjId[line.id1];
+        var objId2 = pointIdToObjId[line.id2];
+        obj += 'l ' + objId1 + ' ' + objId2 + '\n';
+    });
+
+    var blob = new Blob([obj], {type: 'text/plain' });
+    var anchor = document.createElement('a');
+    anchor.download = 'model.obj';
+    anchor.href = (window.URL || window.URL).createObjectURL(blob);
+    anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');;
+    anchor.click();
+}
