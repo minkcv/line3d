@@ -13,9 +13,8 @@ Draw wireframe meshes in the browser. Requires WebGL
 - Box selection
 - Selection copying, extruding, mirroring, rotating and scaling
 - Dark and light themes
+- Import and export Wavefront obj (only vertices and lines)
 
-### TODO
-- Export to Wavefront obj
 
 ### Screenshots
 ![screenshot](./screenshot.PNG)
