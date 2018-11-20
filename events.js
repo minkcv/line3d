@@ -675,3 +675,35 @@ function saveOBJ() {
     anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');;
     anchor.click();
 }
+
+function loadOBJ() {
+    var file = document.querySelector('input[type=file]').files[0];
+    var reader  = new FileReader();
+    reader.onloadend = function () {
+        var objIdsToPoints = {};
+        var objId = 1;
+        var objLines = reader.result.split('\n');
+        for (var i = 0; i < objLines.length; i++) {
+            var objLine = objLines[i];
+            var args = objLine.split(' ');
+            if (args[0] == 'v') {
+                var x = parseFloat(args[1]);
+                var y = parseFloat(args[2]);
+                var z = parseFloat(args[3]);
+                var point = addPointXYZ({position: {x: x, y: y, z: z}});
+                objIdsToPoints[objId] = point;
+                objId++;
+            }
+            if (args[0] == 'l') {
+                var objId1 = parseInt(args[1]);
+                var objId2 = parseInt(args[2]);
+                var pt1 = objIdsToPoints[objId1];
+                var pt2 = objIdsToPoints[objId2];
+                createLine(pt1, pt2);
+            }
+        }
+    }
+    
+    if (file)
+        reader.readAsText(file);
+}
