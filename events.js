@@ -769,7 +769,7 @@ function saveC() {
     });
     output += '};\n';
     output += 'static const int modelIndicesLength = ' + lines.length * 2 + ';\n';
-    output += 'static int modelIndicies[modelIndicesLength] = {\n';
+    output += 'static int modelIndices[modelIndicesLength] = {\n';
     lines.forEach((line) => {
         var last = lines[lines.length - 1] == line;
         var objId1 = pointIdToObjId[line.id1] - 1;
