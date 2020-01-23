@@ -787,3 +787,79 @@ function saveC() {
     anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');;
     anchor.click();
 }
+
+function saveBin() {
+    var points = [];
+    var objId = 1;
+    var pointIdToObjId = {};
+    var compress = document.getElementById('compresssave').checked;
+    lines.forEach((line) => {
+        var pos1 = line.pos1;
+        var pos2 = line.pos2;
+        if (compress) {
+            pos1.x = Math.round(pos1.x);
+            pos1.y = Math.round(pos1.y);
+            pos1.z = Math.round(pos1.z);
+            pos2.x = Math.round(pos2.x);
+            pos2.y = Math.round(pos2.y);
+            pos2.z = Math.round(pos2.z);
+        }
+        var pt1 = {id: line.id1, pos: pos1, conn: []};
+        var pt2 = {id: line.id2, pos: pos2, conn: []};
+        var pt1exists = false;
+        var pt2exists = false;
+        points.forEach((existing) => {
+            if (existing.id == pt1.id)
+                pt1exists = true;
+            if (existing.id == pt2.id)
+                pt2exists = true;
+        });
+        if (!pt1exists) {
+            pointIdToObjId[pt1.id] = objId;
+            objId++;
+            points.push(pt1);
+        }
+        if (!pt2exists) {
+            pointIdToObjId[pt2.id] = objId;
+            objId++;
+            points.push(pt2);
+        }
+    });
+    lines.forEach((line) => {
+        points.forEach((point) => {
+            if (line.id1 == point.id) {
+                if (point.conn.indexOf(line.id2) < 0)
+                    point.conn.push(line.id2);
+            }
+            if (line.id2 == point.id) {
+                if (point.conn.indexOf(line.id1) < 0)
+                    point.conn.push(line.id1);
+            }
+        })
+    });
+    var arraySize = 2 + (lines.length * 2) + (points.length * 2);
+    var output = new Uint8Array(arraySize);
+    output[0] = lines.length;
+    output[1] = 0; // padding
+    var count = 2;
+    lines.forEach((line) => {
+        var objId1 = pointIdToObjId[line.id1] - 1;
+        var objId2 = pointIdToObjId[line.id2] - 1;
+        output[count] = objId1;
+        count++;
+        output[count] = objId2;
+        count++;
+    });
+    points.forEach((point) => {
+        output[count] = point.pos.x;
+        count++;
+        output[count] = point.pos.z;
+        count++;
+    });
+    var blob = new Blob([output], {type: 'application/octet-stream' });
+    var anchor = document.createElement('a');
+    anchor.download = 'model.bin';
+    anchor.href = (window.URL || window.URL).createObjectURL(blob);
+    anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');;
+    anchor.click();
+}
