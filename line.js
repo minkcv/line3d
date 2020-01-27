@@ -18,6 +18,7 @@ function createLine(pt1, pt2) {
     geom.vertices.push(v1);
     geom.vertices.push(v2);
     var line = new THREE.Line(geom, currentLineMat);
+    line.frustumCulled = false;
     var lineData = {
         obj: line,
         geometry: line.geometry,
