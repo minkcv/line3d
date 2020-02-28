@@ -263,10 +263,28 @@ function update() {
     if (mouseDZ < 0) { // Scroll wheel
         realCamera.zoom *= 1 + zoomSpeed;
         realCamera.updateProjectionMatrix();
+        var scale = 1 / realCamera.zoom;
+        scene.children.forEach((child) => {
+            child.children.forEach((child2) => {
+                if (child2.pointCube)
+                    child2.scale.set(scale, scale, scale);
+                if (child2.xGrip || child2.yGrip || child2.zGrip)
+                    child2.scale.set(scale, scale, scale);
+            });
+        });
     }
     else if (mouseDZ > 0) {
         realCamera.zoom *= 1 - zoomSpeed;
         realCamera.updateProjectionMatrix();
+        var scale = 1 / realCamera.zoom;
+        scene.children.forEach((child) => {
+            child.children.forEach((child2) => {
+                if (child2.pointCube)
+                    child2.scale.set(scale, scale, scale);
+                if (child2.xGrip || child2.yGrip || child2.zGrip)
+                    child2.scale.set(scale, scale, scale);
+            });
+        });
     }
     mouseDX = 0;
     mouseDY = 0;
