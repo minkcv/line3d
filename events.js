@@ -614,6 +614,10 @@ function saveShapeJSON() {
     var compress = document.getElementById('compresssave').checked;
     var shapePoints = [];
     var shapeIds = [];
+    if (selectedPoints.length < 3) {
+        alert('You must select at least 3 points are connected in a loop');
+        return;
+    }
     // Follow the points around a loop by their connections
     selectedPoints.forEach((point) => {
         if (shapePoints.length == 0 || shapePoints.length == selectedPoints.length - 1) {
@@ -666,14 +670,22 @@ function saveShapeJSON() {
         shapePoints[child.pointIndex].y = pos.y;
         shapePoints[child.pointIndex].z = pos.z;
         if (compress) {
-            shapePoints[shapePoints.length - 1].x = Math.round(shapePoints[shapePoints.length - 1].x * 100) / 100;
-            shapePoints[shapePoints.length - 1].y = Math.round(shapePoints[shapePoints.length - 1].y * 100) / 100;
-            shapePoints[shapePoints.length - 1].z = Math.round(shapePoints[shapePoints.length - 1].z * 100) / 100;
+            shapePoints[child.pointIndex].x = Math.round(shapePoints[child.pointIndex].x * 100) / 100;
+            shapePoints[child.pointIndex].y = Math.round(shapePoints[child.pointIndex].y * 100) / 100;
+            shapePoints[child.pointIndex].z = Math.round(shapePoints[child.pointIndex].z * 100) / 100;
         }
     });
-    textbox.value = JSON.stringify(shapePoints);
+    quat.inverse();
+    var rotation = {x: quat.x, y: quat.y, z: quat.z, w: quat.w};
+    if (compress) {
+        rotation.x = Math.round(rotation.x * 100) / 100;
+        rotation.y = Math.round(rotation.y * 100) / 100;
+        rotation.z = Math.round(rotation.z * 100) / 100;
+        rotation.w = Math.round(rotation.w * 100) / 100;
+    }
+    textbox.value = JSON.stringify({rot: rotation, points: shapePoints});
     // For Debug
-    /**/
+    /*
     var shape = new THREE.Shape();
     shape.moveTo(shapePoints[0].x, shapePoints[0].y);
     for (var i = 1; i < shapePoints.length; i++) {
@@ -681,9 +693,9 @@ function saveShapeJSON() {
     }
     var shapeGeom = new THREE.ShapeBufferGeometry(shape);
     var mesh = new THREE.Mesh(shapeGeom, blueMat);
-    mesh.applyQuaternion(quat.conjugate());
+    mesh.applyQuaternion(quat);
     scene.add(mesh);
-    /**/
+    */
 }
 
 function saveOBJ() {
