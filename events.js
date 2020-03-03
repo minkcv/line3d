@@ -619,37 +619,37 @@ function saveShapeJSON() {
         return;
     }
     // Follow the points around a loop by their connections
-    selectedPoints.forEach((point) => {
-        if (shapePoints.length == 0 || shapePoints.length == selectedPoints.length - 1) {
-            shapePoints.push({x: point.position.x, y: point.position.y, z: point.position.z});
-            shapeIds.push(point.pointId);
-        }
-        else {
-            var connected = getConnectedPoints(point);
-            var connSelected = [];
-            connected.forEach((conn) => {
-                var selected = false;
-                for (var i = 0; i < selectedPoints.length; i++) {
-                    if (selectedPoints[i].pointId == conn.pointId)
-                        selected = true;
-                }
-                if (selected)
-                    connSelected.push(conn);
-            });
-            for (var cs = 0; cs < connSelected.length; cs++) {
-                var conn = connSelected[cs];
-                var exists = false;
-                for (var i = 0; i < shapeIds.length; i++) {
-                    if (shapeIds[i] == conn.pointId)
-                        exists = true;
-                }
-                if (!exists) {
-                    shapePoints.push({x: point.position.x, y: point.position.y, z: point.position.z});
-                    shapeIds.push(point.pointId);
-                }
+    var nextPoint = selectedPoints[0];
+    var currentPoint = nextPoint;
+    while (nextPoint != null) {
+        currentPoint = nextPoint;
+        nextPoint = null;
+        shapePoints.push({x: currentPoint.position.x, y: currentPoint.position.y, z: currentPoint.position.z});
+        shapeIds.push(currentPoint.pointId);
+        var connected = getConnectedPoints(currentPoint);
+        var connSelected = [];
+        connected.forEach((conn) => {
+            var selected = false;
+            for (var i = 0; i < selectedPoints.length; i++) {
+                if (selectedPoints[i].pointId == conn.pointId)
+                    selected = true;
+            }
+            if (selected)
+                connSelected.push(conn);
+        });
+        for (var cs = 0; cs < connSelected.length; cs++) {
+            var conn = connSelected[cs];
+            var exists = false;
+            for (var i = 0; i < shapeIds.length; i++) {
+                if (shapeIds[i] == conn.pointId)
+                    exists = true;
+            }
+            if (!exists) {
+                nextPoint = conn;
+                break;
             }
         }
-    });
+    }
     var plane = new THREE.Plane();
     plane.setFromCoplanarPoints(selectedPoints[0].position, selectedPoints[1].position, selectedPoints[2].position);
     var quat = new THREE.Quaternion();
