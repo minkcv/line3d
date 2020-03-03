@@ -23,6 +23,11 @@ function addPoint() {
     var cubeGeom = new THREE.BoxGeometry(10, 10, 10);
     var cube = new THREE.Mesh(cubeGeom, blueMat);
     cube.pointCube = true;
+    var scale = 1 / realCamera.zoom;
+    cube.scale.set(scale, scale, scale);
+    xGrip.scale.set(scale, scale, scale);
+    yGrip.scale.set(scale, scale, scale);
+    zGrip.scale.set(scale, scale, scale);
     pointContainer.add(xGrip);
     pointContainer.add(yGrip);
     pointContainer.add(zGrip);
@@ -56,6 +61,11 @@ function addPointXYZ(pt) {
     var cubeGeom = new THREE.BoxGeometry(10, 10, 10);
     var cube = new THREE.Mesh(cubeGeom, blueMat);
     cube.pointCube = true;
+    var scale = 1 / realCamera.zoom;
+    cube.scale.set(scale, scale, scale);
+    xGrip.scale.set(scale, scale, scale);
+    yGrip.scale.set(scale, scale, scale);
+    zGrip.scale.set(scale, scale, scale);
     pointContainer.add(xGrip);
     pointContainer.add(yGrip);
     pointContainer.add(zGrip);

@@ -609,6 +609,83 @@ function loadJSON() {
     });
 }
 
+function saveShapeJSON() {
+    var textbox = document.getElementById('loadsave');
+    var compress = document.getElementById('compresssave').checked;
+    var shapePoints = [];
+    var shapeIds = [];
+    // Follow the points around a loop by their connections
+    selectedPoints.forEach((point) => {
+        if (shapePoints.length == 0 || shapePoints.length == selectedPoints.length - 1) {
+            shapePoints.push({x: point.position.x, y: point.position.y, z: point.position.z});
+            shapeIds.push(point.pointId);
+        }
+        else {
+            var connected = getConnectedPoints(point);
+            var connSelected = [];
+            connected.forEach((conn) => {
+                var selected = false;
+                for (var i = 0; i < selectedPoints.length; i++) {
+                    if (selectedPoints[i].pointId == conn.pointId)
+                        selected = true;
+                }
+                if (selected)
+                    connSelected.push(conn);
+            });
+            for (var cs = 0; cs < connSelected.length; cs++) {
+                var conn = connSelected[cs];
+                var exists = false;
+                for (var i = 0; i < shapeIds.length; i++) {
+                    if (shapeIds[i] == conn.pointId)
+                        exists = true;
+                }
+                if (!exists) {
+                    shapePoints.push({x: point.position.x, y: point.position.y, z: point.position.z});
+                    shapeIds.push(point.pointId);
+                }
+            }
+        }
+    });
+    var plane = new THREE.Plane();
+    plane.setFromCoplanarPoints(selectedPoints[0].position, selectedPoints[1].position, selectedPoints[2].position);
+    var quat = new THREE.Quaternion();
+    quat.setFromUnitVectors(plane.normal, new THREE.Vector3(0, 0, 1));
+    var orbit = new THREE.Object3D();
+    for (var i = 0; i < shapePoints.length; i++) {
+        var point = new THREE.Object3D();
+        point.pointIndex = i;
+        orbit.add(point);
+        point.position.set(shapePoints[i].x, shapePoints[i].y, shapePoints[i].z);
+    }
+    orbit.applyQuaternion(quat);
+    orbit.updateMatrixWorld();
+    orbit.children.forEach((child) => {
+        var pos = new THREE.Vector3();
+        pos.setFromMatrixPosition(child.matrixWorld);
+        shapePoints[child.pointIndex].x = pos.x;
+        shapePoints[child.pointIndex].y = pos.y;
+        shapePoints[child.pointIndex].z = pos.z;
+        if (compress) {
+            shapePoints[shapePoints.length - 1].x = Math.round(shapePoints[shapePoints.length - 1].x * 100) / 100;
+            shapePoints[shapePoints.length - 1].y = Math.round(shapePoints[shapePoints.length - 1].y * 100) / 100;
+            shapePoints[shapePoints.length - 1].z = Math.round(shapePoints[shapePoints.length - 1].z * 100) / 100;
+        }
+    });
+    textbox.value = JSON.stringify(shapePoints);
+    // For Debug
+    /**/
+    var shape = new THREE.Shape();
+    shape.moveTo(shapePoints[0].x, shapePoints[0].y);
+    for (var i = 1; i < shapePoints.length; i++) {
+        shape.lineTo(shapePoints[i].x, shapePoints[i].y);
+    }
+    var shapeGeom = new THREE.ShapeBufferGeometry(shape);
+    var mesh = new THREE.Mesh(shapeGeom, blueMat);
+    mesh.applyQuaternion(quat.conjugate());
+    scene.add(mesh);
+    /**/
+}
+
 function saveOBJ() {
     var obj = '';
     var points = [];
