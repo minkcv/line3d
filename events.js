@@ -677,12 +677,6 @@ function saveShapeJSON() {
     });
     quat.inverse();
     var rotation = {x: quat.x, y: quat.y, z: quat.z, w: quat.w};
-    if (compress) {
-        rotation.x = Math.round(rotation.x * 100) / 100;
-        rotation.y = Math.round(rotation.y * 100) / 100;
-        rotation.z = Math.round(rotation.z * 100) / 100;
-        rotation.w = Math.round(rotation.w * 100) / 100;
-    }
     textbox.value = JSON.stringify({rot: rotation, points: shapePoints});
     // For Debug
     /*
