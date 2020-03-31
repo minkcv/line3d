@@ -457,6 +457,121 @@ function addSphere() {
     }
 }
 
+function addIcoSphere() {
+    // Thanks: http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
+    var iterations = parseInt(document.getElementById('icosphereiterations').value);
+    if (isNaN(iterations))
+        return;
+    if (iterations > 4)
+        return; // Too much
+    var radius = parseInt(document.getElementById('icosphereradius').value);
+    if (isNaN(radius))
+        return;
+
+    var points = [];
+    var cache = {};
+    var triangles = [];
+    var t = (1 + Math.sqrt(5)) / 2.0;
+    addIcoSpherePoint([-1,  t, 0], points);
+    addIcoSpherePoint([ 1,  t, 0], points);
+    addIcoSpherePoint([-1, -t, 0], points);
+    addIcoSpherePoint([ 1, -t, 0], points);
+
+    addIcoSpherePoint([0, -1,  t], points);
+    addIcoSpherePoint([0,  1,  t], points);
+    addIcoSpherePoint([0, -1, -t], points);
+    addIcoSpherePoint([0,  1, -t], points);
+
+    addIcoSpherePoint([ t, 0, -1], points);
+    addIcoSpherePoint([ t, 0,  1], points);
+    addIcoSpherePoint([-t, 0, -1], points);
+    addIcoSpherePoint([-t, 0,  1], points);
+
+    triangles.push([0, 11, 5]);
+    triangles.push([0, 5, 1]);
+    triangles.push([0, 1, 7]);
+    triangles.push([0, 7, 10]);
+    triangles.push([0, 10, 11]);
+
+    triangles.push([1, 5, 9]);
+    triangles.push([5, 11, 4]);
+    triangles.push([11, 10, 2]);
+    triangles.push([10, 7, 6]);
+    triangles.push([7, 1, 8]);
+
+    triangles.push([3, 9, 4]);
+    triangles.push([3, 4, 2]);
+    triangles.push([3, 2, 6]);
+    triangles.push([3, 6, 8]);
+    triangles.push([3, 8, 9]);
+
+    triangles.push([4, 9, 5]);
+    triangles.push([2, 4, 11]);
+    triangles.push([6, 2, 10]);
+    triangles.push([8, 6, 7]);
+    triangles.push([9, 8, 1]);
+
+    for (var i = 0; i < iterations; i++) {
+        var newTriangles = [];
+        for (var t = 0; t < triangles.length; t++) {
+            var a = getMiddlePoint(triangles[t][0], triangles[t][1], cache, points);
+            var b = getMiddlePoint(triangles[t][1], triangles[t][2], cache, points);
+            var c = getMiddlePoint(triangles[t][2], triangles[t][0], cache, points);
+
+            newTriangles.push([triangles[t][0], a, c]);
+            newTriangles.push([triangles[t][1], b, a]);
+            newTriangles.push([triangles[t][2], c, b]);
+            newTriangles.push([a, b, c]);
+        }
+        triangles = newTriangles;
+    }
+    for (var i = 0; i < points.length; i++) {
+        points[i][0] *= radius;
+        points[i][1] *= radius;
+        points[i][2] *= radius;
+    }
+    var pointObjs = [];
+    for (var p = 0; p < points.length; p++) {
+        var pt = addPointXYZ({position: {x: points[p][0], y: points[p][1], z: points[p][2]}});
+        pointObjs.push(pt);
+    }
+    for (var t = 0; t < triangles.length; t++) {
+        createLine(pointObjs[triangles[t][0]], pointObjs[triangles[t][1]]);
+        createLine(pointObjs[triangles[t][1]], pointObjs[triangles[t][2]]);
+        createLine(pointObjs[triangles[t][0]], pointObjs[triangles[t][2]]);
+    }
+}
+
+function addIcoSpherePoint(p, points) {
+    var length = Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+    var pt = [p[0] / length, p[1] / length, p[2] / length];
+    points.push(pt);
+    return points.length - 1;
+}
+
+function getMiddlePoint(p1, p2, cache, points) {
+    var smaller = p2;
+    if (p1 < p2)
+        smaller = p1;
+    var larger = p1;
+    if (p1 < p2)
+        larger = p2;
+    var key = (smaller << 16) + larger;
+    if (cache[key] !== undefined) {
+        return cache[key];
+    }
+    var pt1 = points[p1];
+    var pt2 = points[p2];
+    var middle = [
+        (pt1[0] + pt2[0]) / 2,
+        (pt1[1] + pt2[1]) / 2,
+        (pt1[2] + pt2[2]) / 2
+    ];
+    var index = addIcoSpherePoint(middle, points);
+    cache[key] = index;
+    return index;
+}
+
 function addCylinder() {
     var radius = parseFloat(document.getElementById('cylinderradius').value);
     if (isNaN(radius))
