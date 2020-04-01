@@ -776,6 +776,9 @@ function saveShapeJSON() {
         orbit.add(point);
         point.position.set(shapePoints[i].x, shapePoints[i].y, shapePoints[i].z);
     }
+    var inPlane = new THREE.Vector3();
+    plane.projectPoint(new THREE.Vector3(0, 0, 0), inPlane);
+    var position = {x: Math.round(inPlane.x * 100) / 100, y: Math.round(inPlane.y * 100) / 100, z: Math.round(inPlane.z * 100) / 100};
     orbit.applyQuaternion(quat);
     orbit.updateMatrixWorld();
     orbit.children.forEach((child) => {
@@ -792,7 +795,7 @@ function saveShapeJSON() {
     });
     quat.inverse();
     var rotation = {x: quat.x, y: quat.y, z: quat.z, w: quat.w};
-    textbox.value = JSON.stringify({rot: rotation, points: shapePoints});
+    textbox.value = JSON.stringify({pos: position, rot: rotation, points: shapePoints});
     // For Debug
     /*
     var shape = new THREE.Shape();
@@ -802,6 +805,7 @@ function saveShapeJSON() {
     }
     var shapeGeom = new THREE.ShapeBufferGeometry(shape);
     var mesh = new THREE.Mesh(shapeGeom, blueMat);
+    mesh.position.copy(inPlane);
     mesh.applyQuaternion(quat);
     scene.add(mesh);
     */
