@@ -427,7 +427,7 @@ function addSphere() {
     for (var phi=-phi0; phi<=phi0; phi+=angleDelta) {
         var phir=c*phi; //Phi in radians
         var ring = [];
-        for (var theta=0; theta<=360; theta+=angleDelta) {
+        for (var theta=0; theta<360; theta+=angleDelta) {
             var thetar=c*theta;
             x1 = radius * Math.sin(thetar) * Math.cos(phir);
             y1 = radius * Math.sin(phir);
