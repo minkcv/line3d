@@ -1,4 +1,14 @@
-var currentId = 1;
+function getNextPointId() {
+    var nextId = 1;
+    var existing = [];
+    scene.children.forEach((obj) => {
+        if (obj.pointId)
+            existing.push(obj.pointId);
+    });
+    while (existing.includes(nextId))
+        nextId++;
+    return nextId;
+}
 
 function addPoint() {
     var pointContainer = new THREE.Object3D();
@@ -33,7 +43,7 @@ function addPoint() {
     pointContainer.add(zGrip);
     pointContainer.add(cube);
     pointContainer.position.copy(cam.position);
-    pointContainer.pointId = currentId++;
+    pointContainer.pointId = getNextPointId();
     scene.add(pointContainer);
     return pointContainer;
 }
@@ -72,13 +82,7 @@ function addPointXYZ(pt) {
     pointContainer.add(cube);
     var newPos = new THREE.Vector3(pt.position.x, pt.position.y, pt.position.z);
     pointContainer.position.copy(newPos);
-    if (pt.pointId) {
-        pointContainer.pointId = pt.pointId;
-        currentId = Math.max(currentId, pt.pointId);
-    }
-    else 
-        pointContainer.pointId = currentId;
-    currentId++;
+    pointContainer.pointId = getNextPointId();
     scene.add(pointContainer);
     return pointContainer;
 }

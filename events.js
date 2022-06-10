@@ -704,20 +704,22 @@ function saveJSON() {
 function loadJSON() {
     var textbox = document.getElementById('loadsave');
     var points = JSON.parse(textbox.value);
+    var newIds = [];
     points.forEach((point) => {
         var pt = {pointId: point.id, position: point.pos};
-        addPointXYZ(pt);
+        var newPoint = addPointXYZ(pt);
+        newIds[point.id] = newPoint.pointId;
     });
     points.forEach((point) => {
         point.conn.forEach((otherId) => {
             var other = null;
             points.forEach((candidate) => {
-                if (candidate.id == otherId)
+                if (newIds[candidate.id] == newIds[otherId])
                     other = candidate;
             });
             if (other != null) {
-                var pt1 = {pointId: point.id, position: point.pos};
-                var pt2 = {pointId: other.id, position: other.pos};
+                var pt1 = {pointId: newIds[point.id], position: point.pos};
+                var pt2 = {pointId: newIds[other.id], position: other.pos};
                 createLine(pt1, pt2);
             }
         });
